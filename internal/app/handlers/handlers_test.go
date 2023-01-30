@@ -1,9 +1,9 @@
 package handlers
 
 import (
-	"ShortURL/internal/app/shorten"
 	"bytes"
 	"github.com/gin-gonic/gin"
+	"github.com/spaceosint/short-url/internal/storage"
 	"github.com/stretchr/testify/assert"
 	"net/http/httptest"
 	"testing"
@@ -27,8 +27,8 @@ func TestHandler_PostNewUserURL(t *testing.T) {
 			t.Run(test.name, func(t *testing.T) {
 				// Init Endpoint
 				r := gin.New()
-				s := shorten.New()
-				r.POST("/", New(s).PostNewUserURL)
+				st := storage.NewInMemory()
+				r.POST("/", New(st).PostNewUserURL)
 
 				// Create Request
 				w := httptest.NewRecorder()
@@ -64,8 +64,8 @@ func TestHandler_GetUserURLByIdentifier(t *testing.T) {
 			t.Run(test.name, func(t *testing.T) {
 				// Init Endpoint
 				r := gin.New()
-				s := shorten.New()
-				r.GET("/:Identifier", New(s).GetUserURLByIdentifier)
+				st := storage.NewInMemory()
+				r.GET("/:Identifier", New(st).GetUserURLByIdentifier)
 
 				// Create Request
 				w := httptest.NewRecorder()
@@ -76,7 +76,7 @@ func TestHandler_GetUserURLByIdentifier(t *testing.T) {
 
 				// Assert
 				assert.Equal(t, test.expectedStatusCode, w.Code)
-				assert.Equal(t, test.expectedResponseHeader, w.HeaderMap.Get("Location"))
+				assert.Equal(t, test.expectedResponseHeader, w.Header().Get("Location"))
 			})
 		}
 	})

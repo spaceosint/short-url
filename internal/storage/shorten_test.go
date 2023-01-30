@@ -1,4 +1,4 @@
-package shorten
+package storage
 
 import (
 	"github.com/stretchr/testify/assert"
@@ -23,13 +23,13 @@ func TestShorten(t *testing.T) {
 		}
 
 		for _, tc := range testCases {
-			actual := New().ShortenURL(tc.id)
+			actual := ShortenURL(tc.id)
 			assert.Equal(t, tc.expected, actual)
 		}
 	})
 	t.Run("is idempotent", func(t *testing.T) {
 		for i := 0; i < 100; i++ {
-			assert.Equal(t, "us", New().ShortenURL(1024))
+			assert.Equal(t, "us", ShortenURL(1024))
 		}
 	})
 }

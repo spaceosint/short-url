@@ -1,4 +1,4 @@
-module ShortURL
+module github.com/spaceosint/short-url
 
 go 1.20
 

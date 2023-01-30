@@ -1,7 +1,7 @@
 package main
 
 import (
-	"ShortURL/internal/app/pkg/app"
+	"github.com/spaceosint/short-url/internal/app/pkg/app"
 	"log"
 )
 
@@ -14,6 +14,6 @@ func main() {
 
 	err = a.Run()
 	if err != nil {
-		log.Fatalf("Server started: %v", err)
+		log.Fatalf("Server crashed: %v", err)
 	}
 }

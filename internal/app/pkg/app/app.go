@@ -1,22 +1,21 @@
 package app
 
 import (
-	"ShortURL/internal/app/handlers"
-	"ShortURL/internal/app/shorten"
 	"github.com/gin-gonic/gin"
+	"github.com/spaceosint/short-url/internal/app/handlers"
+	"github.com/spaceosint/short-url/internal/storage"
 	"log"
 )
 
 type App struct {
 	h *handlers.Handler
-	s *shorten.Shorten
 	r *gin.Engine
 }
 
 func New() (*App, error) {
 	a := &App{}
-	a.s = shorten.New()
-	a.h = handlers.New(a.s)
+	st := storage.NewInMemory()
+	a.h = handlers.New(st)
 	a.r = gin.Default()
 	a.r.GET("/fwfwrfwfwhfwedscwewfgtgbrgf3r34fwc43c34fcwcxe2d2f43g544g5g34f24f23f4f", a.h.GetUsersURL)
 	a.r.GET("/:Identifier", a.h.GetUserURLByIdentifier)

@@ -16,7 +16,7 @@ var (
 )
 
 type Storage interface {
-	GetAll() ([]UserURL, error)
+	GetAll() (map[string]map[string]string, error)
 	GetOriginalURL(Identifier string) (string, error)
 	GetShortURL(newUserURL string) string
 }

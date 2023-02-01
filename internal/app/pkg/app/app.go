@@ -8,14 +8,15 @@ import (
 )
 
 type App struct {
-	h *handlers.Handler
-	r *gin.Engine
+	st storage.Storage
+	h  *handlers.Handler
+	r  *gin.Engine
 }
 
 func New() (*App, error) {
 	a := &App{}
-	st := storage.NewInMemory()
-	a.h = handlers.New(st)
+	s := storage.NewInMemory()
+	a.h = handlers.New(s)
 	a.r = gin.Default()
 	a.r.GET("/fwfwrfwfwhfwedscwewfgtgbrgf3r34fwc43c34fcwcxe2d2f43g544g5g34f24f23f4f", a.h.GetUsersURL)
 	a.r.GET("/:Identifier", a.h.GetUserURLByIdentifier)

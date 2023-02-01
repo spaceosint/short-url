@@ -4,10 +4,10 @@ import "strings"
 
 const alphabet = "abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ12345678"
 
-var alphabetLen = uint32(len(alphabet))
+var alphabetLen = len(alphabet)
 
-func ShortenURL(id uint32) string {
-	var nums []uint32
+func ShortenURL(id int) string {
+	var nums []int
 	for num := id; num > 0; {
 		nums = append(nums, num%alphabetLen)
 		num /= alphabetLen
@@ -21,7 +21,7 @@ func ShortenURL(id uint32) string {
 	return builder.String()
 }
 
-func reverse(s []uint32) {
+func reverse(s []int) {
 	for i, j := 0, len(s)-1; i < j; i, j = i+1, j-1 {
 		s[i], s[j] = s[j], s[i]
 	}

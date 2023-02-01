@@ -8,7 +8,7 @@ import (
 func TestShorten(t *testing.T) {
 	t.Run("returns analphanumeric short identifier", func(t *testing.T) {
 		type testCase struct {
-			id       uint32
+			id       int
 			expected string
 		}
 		testCases := []testCase{

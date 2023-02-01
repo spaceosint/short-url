@@ -39,9 +39,9 @@ func (s *InMemory) GetOriginalURL(Identifier string) (string, error) {
 	defer s.lock.Unlock()
 
 	for _, userUrls := range s.m {
-		for shortUserUrl, originalUrl := range userUrls {
-			if Identifier == shortUserUrl {
-				return originalUrl, nil
+		for shortUserURL, originalURL := range userUrls {
+			if Identifier == shortUserURL {
+				return originalURL, nil
 			}
 		}
 	}
@@ -71,8 +71,8 @@ func (s *InMemory) GetShortURL(newUserURL string) string {
 
 func (s *InMemory) GetNewID() int {
 	var max = 10001
-	for stId, _ := range s.m {
-		id, _ := strconv.Atoi(stId)
+	for stID := range s.m {
+		id, _ := strconv.Atoi(stID)
 		if id > max {
 			max = id
 		}

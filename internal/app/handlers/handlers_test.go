@@ -107,12 +107,10 @@ func TestHandler_PostNewUserURLJSON(t *testing.T) {
 			expectedResponseBody string
 		}{
 			{
-				name:               "Ok POST",
-				inputBody:          `{"url": "https://google.com/new2"}`,
-				expectedStatusCode: 201,
-				expectedResponseBody: `{
-    "result": "http://127.0.0.1:8080/dkK"
-}`,
+				name:                 "Ok POST",
+				inputBody:            `{"url": "https://google.com/new2"}`,
+				expectedStatusCode:   201,
+				expectedResponseBody: `{"result": "http://127.0.0.1:8080/dkK"}`,
 			}}
 		for _, test := range tests {
 			t.Run(test.name, func(t *testing.T) {
@@ -136,7 +134,7 @@ func TestHandler_PostNewUserURLJSON(t *testing.T) {
 
 				// Assert
 				assert.Equal(t, w.Code, test.expectedStatusCode)
-				assert.Equal(t, w.Body.String(), test.expectedResponseBody)
+				assert.JSONEq(t, w.Body.String(), test.expectedResponseBody)
 			})
 		}
 	})

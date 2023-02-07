@@ -160,7 +160,7 @@ func TestHandler_PostNewUserURLJSON(t *testing.T) {
 				name:                 "Ok POST",
 				inputBody:            `{"url": "https://google.com/new2"}`,
 				expectedStatusCode:   201,
-				expectedResponseBody: `{"result": "http://127.0.0.1:8080/dkL"}`,
+				expectedResponseBody: `{"result": "http://127.0.0.1:8080/dkM"}`,
 			}}
 		for _, test := range tests {
 			t.Run(test.name, func(t *testing.T) {

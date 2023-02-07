@@ -183,8 +183,8 @@ func TestHandler_PostNewUserURLJSON(t *testing.T) {
 				r.ServeHTTP(w, req)
 
 				// Assert
-				assert.Equal(t, w.Code, test.expectedStatusCode)
-				assert.JSONEq(t, w.Body.String(), test.expectedResponseBody)
+				assert.Equal(t, test.expectedStatusCode, w.Code)
+				assert.JSONEq(t, test.expectedResponseBody, w.Body.String())
 			})
 		}
 	})

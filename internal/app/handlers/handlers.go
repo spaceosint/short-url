@@ -6,7 +6,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/goccy/go-json"
 	"github.com/spaceosint/short-url/internal/storage"
-	"io"
 	"log"
 	"net/http"
 )
@@ -52,22 +51,27 @@ func (h *Handler) PostNewUserURLJSON(c *gin.Context) {
 	//	return
 	//}
 
-	b, err := io.ReadAll(c.Request.Body)
-	// обрабатываем ошибку
-	if err != nil {
-		c.IndentedJSON(http.StatusBadRequest, MyError{"bed_request"})
-		return
-	}
+	//b, err := io.ReadAll(c.Request.Body)
+	//// обрабатываем ошибку
+	//if err != nil {
+	//	c.IndentedJSON(http.StatusBadRequest, MyError{"bed_request"})
+	//	return
+	//}
 
 	//ewUserURL, err := c.GetRawData()
 	//if err != nil {
 	//	c.IndentedJSON(http.StatusBadRequest, MyError{"bed_request"})
 	//	return
 	//}
-	if err := json.Unmarshal(b, &newUserURL); err != nil {
-		panic(err)
+	//if err := json.Unmarshal(b, &newUserURL); err != nil {
+	//	panic(err)
+	//}
+
+	if err := json.NewDecoder(c.Request.Body).Decode(&newUserURL); err != nil {
+		c.IndentedJSON(http.StatusBadRequest, MyError{"bed_request"})
+		return
 	}
-	fmt.Println(newUserURL.OriginalURL)
+	fmt.Println(newUserURL)
 	shortURL, err := h.storage.GetShortURL(newUserURL.OriginalURL)
 	if err != nil {
 		log.Fatal(err)

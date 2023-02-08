@@ -82,10 +82,10 @@ func (h *Handler) PostNewUserURLJSON(c *gin.Context) {
 	buf := bytes.NewBuffer([]byte{})
 	encoder := json.NewEncoder(buf)
 	encoder.SetEscapeHTML(false) // без этой опции символ '&' будет заменён на "\u0026"
-	encoder.Encode(newUserURL)
+	encoder.Encode(newUserURL.Identifier)
 	fmt.Println(buf.String())
 
-	c.IndentedJSON(http.StatusCreated, buf.String())
+	c.IndentedJSON(http.StatusCreated, gin.H{"result": buf.String()})
 }
 func (h *Handler) PostNewUserURL(c *gin.Context) {
 

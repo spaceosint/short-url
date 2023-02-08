@@ -47,6 +47,5 @@ func (s *InMemory) GetShortURL(newUserURL string) (string, error) {
 	}
 	s.m[shortURL] = newUserURL
 
-	return shortURL, nil
+	return "http://127.0.0.1:8080/" + shortURL, nil
 }
-

@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -71,12 +72,20 @@ func (h *Handler) PostNewUserURLJSON(c *gin.Context) {
 		c.IndentedJSON(http.StatusBadRequest, MyError{"bed_request"})
 		return
 	}
-	fmt.Println(newUserURL)
+
 	shortURL, err := h.storage.GetShortURL(newUserURL.OriginalURL)
 	if err != nil {
 		log.Fatal(err)
 	}
-	c.IndentedJSON(http.StatusCreated, gin.H{"result": "http://127.0.0.1:8080/" + shortURL})
+	newUserURL.Identifier = shortURL
+
+	buf := bytes.NewBuffer([]byte{})
+	encoder := json.NewEncoder(buf)
+	encoder.SetEscapeHTML(false) // без этой опции символ '&' будет заменён на "\u0026"
+	encoder.Encode(newUserURL)
+	fmt.Println(buf.String())
+
+	c.IndentedJSON(http.StatusCreated, buf.String())
 }
 func (h *Handler) PostNewUserURL(c *gin.Context) {
 

@@ -85,7 +85,7 @@ func (h *Handler) PostNewUserURLJSON(c *gin.Context) {
 	encoder.Encode(newUserURL.Identifier)
 	fmt.Println(buf.String())
 
-	c.IndentedJSON(http.StatusCreated, gin.H{"result": buf.String()})
+	c.IndentedJSON(http.StatusCreated, gin.H{"result": newUserURL.OriginalURL})
 }
 func (h *Handler) PostNewUserURL(c *gin.Context) {
 

@@ -2,8 +2,11 @@ package handlers
 
 import (
 	"errors"
+	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/goccy/go-json"
 	"github.com/spaceosint/short-url/internal/storage"
+	"io"
 	"log"
 	"net/http"
 )
@@ -43,12 +46,28 @@ func (h *Handler) GetUsersURL(c *gin.Context) {
 }
 func (h *Handler) PostNewUserURLJSON(c *gin.Context) {
 	var newUserURL storage.UserURL
+	//
+	//if err := c.BindJSON(&newUserURL); err != nil {
+	//	c.IndentedJSON(http.StatusBadRequest, MyError{"bed_request"})
+	//	return
+	//}
 
-	if err := c.BindJSON(&newUserURL); err != nil {
+	b, err := io.ReadAll(c.Request.Body)
+	// обрабатываем ошибку
+	if err != nil {
 		c.IndentedJSON(http.StatusBadRequest, MyError{"bed_request"})
 		return
 	}
 
+	//ewUserURL, err := c.GetRawData()
+	//if err != nil {
+	//	c.IndentedJSON(http.StatusBadRequest, MyError{"bed_request"})
+	//	return
+	//}
+	if err := json.Unmarshal(b, &newUserURL); err != nil {
+		panic(err)
+	}
+	fmt.Println(newUserURL.OriginalURL)
 	shortURL, err := h.storage.GetShortURL(newUserURL.OriginalURL)
 	if err != nil {
 		log.Fatal(err)

@@ -22,14 +22,14 @@ func New(cfg config.Config) (*App, error) {
 	a.r.GET("/fwfwrfwfwhfwedscwewfgtgbrgf3r34fwc43c34fcwcxe2d2f43g544g5g34f24f23f4f", a.h.GetUsersURL)
 	a.r.GET("/:Identifier", a.h.GetUserURLByIdentifier)
 	a.r.POST("/", a.h.PostNewUserURL)
-	a.r.POST("/api/"+cfg.BaseURL, a.h.PostNewUserURLJSON)
+	a.r.POST("/"+cfg.BaseURL+"/shorten", a.h.PostNewUserURLJSON)
 	//a.r.RedirectTrailingSlash = false
 	return a, nil
 }
 
 func (a *App) Run(cfg config.Config) error {
 
-	err := a.r.Run(cfg.ServerAddress)
+	err := a.r.Run("localhost:" + cfg.ServerAddress)
 	if err != nil {
 		log.Fatalf("Server started but then stopped error: %v", err)
 	}

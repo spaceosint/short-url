@@ -7,7 +7,7 @@ import (
 
 type Config struct {
 	ServerAddress string `env:"SERVER_ADDRESS" envDefault:"8080"`
-	BaseURL       string `env:"BASE_URL" envDefault:"shorten"`
+	BaseURL       string `env:"BASE_URL" envDefault:"api"`
 }
 
 //var instance *Config

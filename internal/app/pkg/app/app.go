@@ -29,7 +29,7 @@ func New(cfg config.Config) (*App, error) {
 
 func (a *App) Run(cfg config.Config) error {
 
-	err := a.r.Run("localhost:" + cfg.ServerAddress)
+	err := a.r.Run("127.0.0.1:" + cfg.ServerAddress)
 	if err != nil {
 		log.Fatalf("Server started but then stopped error: %v", err)
 	}

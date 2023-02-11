@@ -22,7 +22,7 @@ func New(cfg config.Config) (*App, error) {
 	a.r.GET("/fwfwrfwfwhfwedscwewfgtgbrgf3r34fwc43c34fcwcxe2d2f43g544g5g34f24f23f4f", a.h.GetUsersURL)
 	a.r.GET("/:Identifier", a.h.GetUserURLByIdentifier)
 	a.r.POST("/", a.h.PostNewUserURL)
-	a.r.POST("/"+cfg.BaseURL+"/shorten", a.h.PostNewUserURLJSON)
+	a.r.POST("/api/shorten", a.h.PostNewUserURLJSON)
 	//a.r.RedirectTrailingSlash = false
 	return a, nil
 }

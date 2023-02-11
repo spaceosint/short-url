@@ -51,5 +51,5 @@ func (s *InMemory) GetShortURL(newUserURL string) (string, error) {
 	}
 	s.m[shortURL] = newUserURL
 
-	return "http://" + cfg.BaseURL + "/" + shortURL, nil
+	return cfg.BaseURL + "/" + shortURL, nil
 }

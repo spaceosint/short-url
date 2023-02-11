@@ -1,7 +1,6 @@
 package app
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/spaceosint/short-url/internal/app/handlers"
 	"github.com/spaceosint/short-url/internal/config"
@@ -29,7 +28,7 @@ func New(cfg config.Config) (*App, error) {
 }
 
 func (a *App) Run(cfg config.Config) error {
-	fmt.Println("dwqdwq", cfg.ServerAddress)
+
 	err := a.r.Run(cfg.ServerAddress)
 	if err != nil {
 		log.Fatalf("Server started but then stopped error: %v", err)

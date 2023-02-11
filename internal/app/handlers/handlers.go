@@ -96,7 +96,6 @@ func (h *Handler) PostNewUserURL(c *gin.Context) {
 		return
 	}
 
-	//shortURL := h.storage.GetShortURL(string(newUserURL))
 	shortURL, err := h.storage.GetShortURL(string(newUserURL))
 	if err != nil {
 		log.Fatal(err)

@@ -101,7 +101,7 @@ func (h *Handler) PostNewUserURL(c *gin.Context) {
 		log.Fatal(err)
 	}
 
-	c.String(http.StatusCreated, shortURL)
+	c.String(http.StatusCreated, "http://"+shortURL)
 }
 func (h *Handler) GetUserURLByIdentifier(c *gin.Context) {
 	id := c.Param("Identifier")

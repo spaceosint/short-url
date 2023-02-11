@@ -10,7 +10,7 @@ Content-Type: application/text
 
 ###
 
-GET http://127.0.0.1:8080/dkK
+GET http://127.0.0.1:8081/dkM
 
 ###
 POST http://localhost:8080/api/shorten

@@ -5,7 +5,8 @@ import (
 	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/goccy/go-json"
+	"github.com/segmentio/encoding/json"
+
 	"github.com/spaceosint/short-url/internal/storage"
 	"log"
 	"net/http"

@@ -1,6 +1,9 @@
 package storage
 
 import (
+	"fmt"
+	"github.com/spaceosint/short-url/internal/config"
+	"github.com/spaceosint/short-url/internal/storage/file_bd"
 	"sync"
 )
 
@@ -20,6 +23,8 @@ var ID int = 10000
 func (s *InMemory) GetAll() (map[string]string, error) {
 	s.lock.Lock()
 	defer s.lock.Unlock()
+	bd, _ := file_bd.NewConsumer("bd")
+	fmt.Println(bd)
 	if s.m != nil {
 		return s.m, nil
 	}
@@ -38,6 +43,7 @@ func (s *InMemory) GetOriginalURL(Identifier string) (string, error) {
 func (s *InMemory) GetShortURL(newUserURL string) (string, error) {
 	s.lock.Lock()
 	defer s.lock.Unlock()
+	cfg := config.GetConfig()
 
 	ID++
 	shortURL := ShortenURL(ID)
@@ -47,5 +53,8 @@ func (s *InMemory) GetShortURL(newUserURL string) (string, error) {
 	}
 	s.m[shortURL] = newUserURL
 
-	return "http://127.0.0.1:8080/" + shortURL, nil
+	return cfg.ServerAddress + "/" + shortURL, nil
 }
+
+
+

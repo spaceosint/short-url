@@ -2,54 +2,56 @@ package storage
 
 import (
 	"github.com/spaceosint/short-url/internal/config"
+	"github.com/spaceosint/short-url/internal/storage/filestore"
 	"sync"
 )
 
 type InMemory struct {
-	lock sync.Mutex
-	m    map[string]string
+	lock   sync.Mutex
+	memory filestore.FileStore
 }
 
 func NewInMemory() *InMemory {
-	return &InMemory{
-		m: make(map[string]string),
-	}
+	return &InMemory{}
 }
 
-var ID int = 10000
-
-func (s *InMemory) GetAll() (map[string]string, error) {
+func (s *InMemory) GetAll() ([]filestore.Event, error) {
 	s.lock.Lock()
 	defer s.lock.Unlock()
 	//bd, _ := file_bd.NewConsumer("bd")
 	//fmt.Println(bd)
-	if s.m != nil {
-		return s.m, nil
+	cfg := config.GetConfig()
+	users := s.memory.GetAllByPath(cfg.FileStoragePath)
+	if users != nil {
+		return users, nil
 	}
-	return s.m, ErrNotFound
+	return users, ErrNotFound
 }
 func (s *InMemory) GetOriginalURL(Identifier string) (string, error) {
 	s.lock.Lock()
 	defer s.lock.Unlock()
-
-	if v, ok := s.m[Identifier]; ok {
-		return v, nil
+	cfg := config.GetConfig()
+	originalURL, err := s.memory.GetOriginalURL(Identifier, cfg.FileStoragePath)
+	if err != nil {
+		return "", err
 	}
-	return "", ErrNotFound
+	return originalURL, nil
 }
 
 func (s *InMemory) GetShortURL(newUserURL string) (string, error) {
 	s.lock.Lock()
 	defer s.lock.Unlock()
+
 	cfg := config.GetConfig()
 
-	ID++
-	shortURL := ShortenURL(ID)
+	newID := s.memory.GetNewID(cfg.FileStoragePath)
 
-	if _, ok := s.m[shortURL]; ok {
-		return "", ErrAlreadyExists
+	shortURL := ShortenURL(newID)
+
+	err := s.memory.AddNewLink(newID, shortURL, newUserURL, cfg.FileStoragePath)
+	if err != nil {
+		panic(err)
 	}
-	s.m[shortURL] = newUserURL
 
 	return cfg.BaseURL + "/" + shortURL, nil
 }

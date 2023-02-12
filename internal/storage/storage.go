@@ -1,6 +1,9 @@
 package storage
 
-import "errors"
+import (
+	"errors"
+	"github.com/spaceosint/short-url/internal/storage/filestore"
+)
 
 var (
 	ErrNotFound      = errors.New("not found")
@@ -8,7 +11,7 @@ var (
 )
 
 type Storage interface {
-	GetAll() (map[string]string, error)
+	GetAll() ([]filestore.Event, error)
 	GetOriginalURL(Identifier string) (string, error)
 	GetShortURL(newUserURL string) (string, error)
 }

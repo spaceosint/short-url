@@ -1,28 +1,37 @@
 package main
 
 import (
+	"flag"
+	"fmt"
 	"github.com/spaceosint/short-url/internal/app/pkg/app"
 	"github.com/spaceosint/short-url/internal/config"
 	"log"
+	"os"
 )
 
+func getEnv(key, fallback string) string {
+	if value, ok := os.LookupEnv(key); ok {
+		return value
+	}
+	return fallback
+}
 func main() {
 	cfg := config.GetConfig()
 
-	//serverAddress := flag.String("a", os.Getenv("SERVER_ADDRESS"), "a string")
-	//fileStoragePath := flag.String("b", os.Getenv("BASE_URL"), "a string")
-	//baseURL := flag.String("f", os.Getenv("FILE_STORAGE_PATH"), "a string")
-	//flag.Parse()
+	serverAddress := flag.String("a", getEnv("SERVER_ADDRESS", "127.0.0.1:8080"), "a string")
+	fileStoragePath := flag.String("b", getEnv("BASE_URL", "http://127.0.0.1:8080"), "a string")
+	baseURL := flag.String("f", getEnv("FILE_STORAGE_PATH", "file"), "a string")
+	flag.Parse()
 	//if *serverAddress != "" {
-	//	cfg.ServerAddress = *serverAddress
+	cfg.ServerAddress = *serverAddress
 	//}
 	//if *fileStoragePath != "" {
-	//	cfg.FileStoragePath = *fileStoragePath
+	cfg.FileStoragePath = *fileStoragePath
 	//}
 	//if *baseURL != "" {
-	//	cfg.BaseURL = *baseURL
+	cfg.BaseURL = *baseURL
 	//}
-	//fmt.Println(cfg)
+	fmt.Println(cfg)
 	a, err := app.New(cfg)
 	if err != nil {
 		log.Fatal(err)

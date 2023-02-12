@@ -22,15 +22,15 @@ func main() {
 	fileStoragePath := flag.String("b", getEnv("BASE_URL", "file"), "a string")
 	baseURL := flag.String("f", getEnv("FILE_STORAGE_PATH", "http://127.0.0.1:8080"), "a string")
 	flag.Parse()
-	if *serverAddress != "" {
-		cfg.ServerAddress = *serverAddress
-	}
-	if *fileStoragePath != "" {
-		cfg.FileStoragePath = *fileStoragePath
-	}
-	if *baseURL != "" {
-		cfg.BaseURL = *baseURL
-	}
+	//if *serverAddress != "" {
+	cfg.ServerAddress = *serverAddress
+	//}
+	//if *fileStoragePath != "" {
+	cfg.FileStoragePath = *fileStoragePath
+	//}
+	//if *baseURL != "" {
+	cfg.BaseURL = *baseURL
+	//}
 	fmt.Println(cfg)
 	a, err := app.New(cfg)
 	if err != nil {

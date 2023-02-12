@@ -23,7 +23,7 @@ func TestShorten(t *testing.T) {
 		}
 
 		for _, tc := range testCases {
-			actual := ShortenURL(tc.id)
+			actual := ShortenURL(uint(tc.id))
 			assert.Equal(t, tc.expected, actual)
 		}
 	})

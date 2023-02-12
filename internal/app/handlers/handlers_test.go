@@ -3,6 +3,7 @@ package handlers
 import (
 	"bytes"
 	"github.com/gin-gonic/gin"
+	"github.com/spaceosint/short-url/internal/config"
 	"github.com/spaceosint/short-url/internal/storage"
 	"github.com/stretchr/testify/assert"
 	"net/http/httptest"
@@ -29,8 +30,8 @@ func TestHandler_PostNewUserURL(t *testing.T) {
 				r := gin.New()
 
 				st := storage.NewInMemory()
-
-				r.POST("/", New(st).PostNewUserURL)
+				cfg := config.GetConfig()
+				r.POST("/", New(st, cfg).PostNewUserURL)
 
 				// Create Request
 				w := httptest.NewRecorder()
@@ -122,8 +123,8 @@ func TestHandler_GetUserURLByIdentifier(t *testing.T) {
 				// Init Endpoint
 				r := gin.New()
 				st := storage.NewInMemory()
-
-				r.POST("/", New(st).PostNewUserURL)
+				cfg := config.GetConfig()
+				r.POST("/", New(st, cfg).PostNewUserURL)
 				// Create Request
 				w := httptest.NewRecorder()
 				nReq := httptest.NewRequest("POST", "/",
@@ -132,7 +133,7 @@ func TestHandler_GetUserURLByIdentifier(t *testing.T) {
 				// Make Request
 				r.ServeHTTP(w, nReq)
 				r2 := gin.New()
-				r2.GET("/:Identifier", New(st).GetUserURLByIdentifier)
+				r2.GET("/:Identifier", New(st, cfg).GetUserURLByIdentifier)
 				// Create Request
 				w2 := httptest.NewRecorder()
 				req := httptest.NewRequest("GET", "/"+test.getParams, nil)

@@ -16,22 +16,21 @@ func NewInMemory() *InMemory {
 	return &InMemory{}
 }
 
-func (s *InMemory) GetAll() ([]filestore.Event, error) {
+func (s *InMemory) GetAll(cfg config.Config) ([]filestore.Event, error) {
 	s.lock.Lock()
 	defer s.lock.Unlock()
 	//bd, _ := file_bd.NewConsumer("bd")
 	//fmt.Println(bd)
-	cfg := config.GetConfig()
+
 	users := s.memory.GetAllByPath(cfg.FileStoragePath)
 	if users != nil {
 		return users, nil
 	}
 	return users, ErrNotFound
 }
-func (s *InMemory) GetOriginalURL(Identifier string) (string, error) {
+func (s *InMemory) GetOriginalURL(cfg config.Config, Identifier string) (string, error) {
 	s.lock.Lock()
 	defer s.lock.Unlock()
-	cfg := config.GetConfig()
 	originalURL, err := s.memory.GetOriginalURL(Identifier, cfg.FileStoragePath)
 	if err != nil {
 		return "", err
@@ -39,11 +38,9 @@ func (s *InMemory) GetOriginalURL(Identifier string) (string, error) {
 	return originalURL, nil
 }
 
-func (s *InMemory) GetShortURL(newUserURL string) (string, error) {
+func (s *InMemory) GetShortURL(cfg config.Config, newUserURL string) (string, error) {
 	s.lock.Lock()
 	defer s.lock.Unlock()
-
-	cfg := config.GetConfig()
 
 	newID := s.memory.GetNewID(cfg.FileStoragePath)
 

@@ -17,7 +17,7 @@ type App struct {
 func New(cfg config.Config) (*App, error) {
 	a := &App{}
 	s := storage.NewInMemory()
-	a.h = handlers.New(s)
+	a.h = handlers.New(s, cfg)
 	a.r = gin.Default()
 	a.r.GET("/fwfwrfwfwhfwedscwewfgtgbrgf3r34fwc43c34fcwcxe2d2f43g544g5g34f24f23f4f", a.h.GetUsersURL)
 	a.r.GET("/:Identifier", a.h.GetUserURLByIdentifier)

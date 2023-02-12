@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/segmentio/encoding/json"
+	"github.com/spaceosint/short-url/internal/config"
 
 	"github.com/spaceosint/short-url/internal/storage"
 	"log"
@@ -27,17 +28,19 @@ type handler interface {
 
 type Handler struct {
 	storage storage.Storage
+	cfg     config.Config
 }
 
-func New(storage storage.Storage) *Handler {
+func New(storage storage.Storage, config config.Config) *Handler {
 	return &Handler{
+		cfg:     config,
 		storage: storage,
 	}
 }
 
 func (h *Handler) GetUsersURL(c *gin.Context) {
 	//users, err := h.storage.GetAll()
-	users, err := h.storage.GetAll()
+	users, err := h.storage.GetAll(h.cfg)
 	if err != nil {
 		c.Status(http.StatusNotFound)
 		return
@@ -47,34 +50,13 @@ func (h *Handler) GetUsersURL(c *gin.Context) {
 }
 func (h *Handler) PostNewUserURLJSON(c *gin.Context) {
 	var newUserURL storage.UserURL
-	//
-	//if err := c.BindJSON(&newUserURL); err != nil {
-	//	c.IndentedJSON(http.StatusBadRequest, MyError{"bed_request"})
-	//	return
-	//}
-
-	//b, err := io.ReadAll(c.Request.Body)
-	//// обрабатываем ошибку
-	//if err != nil {
-	//	c.IndentedJSON(http.StatusBadRequest, MyError{"bed_request"})
-	//	return
-	//}
-
-	//ewUserURL, err := c.GetRawData()
-	//if err != nil {
-	//	c.IndentedJSON(http.StatusBadRequest, MyError{"bed_request"})
-	//	return
-	//}
-	//if err := json.Unmarshal(b, &newUserURL); err != nil {
-	//	panic(err)
-	//}
 
 	if err := json.NewDecoder(c.Request.Body).Decode(&newUserURL); err != nil {
 		c.IndentedJSON(http.StatusBadRequest, MyError{"bed_request"})
 		return
 	}
 
-	shortURL, err := h.storage.GetShortURL(newUserURL.OriginalURL)
+	shortURL, err := h.storage.GetShortURL(h.cfg, newUserURL.OriginalURL)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -96,7 +78,7 @@ func (h *Handler) PostNewUserURL(c *gin.Context) {
 		return
 	}
 
-	shortURL, err := h.storage.GetShortURL(string(newUserURL))
+	shortURL, err := h.storage.GetShortURL(h.cfg, string(newUserURL))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -106,7 +88,7 @@ func (h *Handler) PostNewUserURL(c *gin.Context) {
 func (h *Handler) GetUserURLByIdentifier(c *gin.Context) {
 	id := c.Param("Identifier")
 	//OriginalURL, err := h.storage.GetOriginalURL(id) storage.NewInMemory().
-	OriginalURL, err := h.storage.GetOriginalURL(id)
+	OriginalURL, err := h.storage.GetOriginalURL(h.cfg, id)
 	if errors.Is(err, storage.ErrNotFound) {
 		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "URL not found"})
 		return

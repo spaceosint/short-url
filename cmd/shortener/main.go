@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"github.com/spaceosint/short-url/internal/app/pkg/app"
 	"github.com/spaceosint/short-url/internal/config"
 	"log"
@@ -24,7 +25,7 @@ func main() {
 	if *baseURL != "" {
 		cfg.BaseURL = *baseURL
 	}
-
+	fmt.Println(cfg)
 	a, err := app.New(cfg)
 	if err != nil {
 		log.Fatal(err)

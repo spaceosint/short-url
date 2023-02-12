@@ -8,7 +8,7 @@ import (
 func TestShorten(t *testing.T) {
 	t.Run("returns analphanumeric short identifier", func(t *testing.T) {
 		type testCase struct {
-			id       int
+			id       uint
 			expected string
 		}
 		testCases := []testCase{
@@ -23,7 +23,7 @@ func TestShorten(t *testing.T) {
 		}
 
 		for _, tc := range testCases {
-			actual := ShortenURL(uint(tc.id))
+			actual := ShortenURL(tc.id)
 			assert.Equal(t, tc.expected, actual)
 		}
 	})

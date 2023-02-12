@@ -1,6 +1,7 @@
 package storage
 
 import (
+	"fmt"
 	"github.com/spaceosint/short-url/internal/config"
 	"github.com/spaceosint/short-url/internal/storage/filestore"
 	"sync"
@@ -47,7 +48,7 @@ func (s *InMemory) GetShortURL(newUserURL string) (string, error) {
 	newID := s.memory.GetNewID(cfg.FileStoragePath)
 
 	shortURL := ShortenURL(newID)
-
+	fmt.Println()
 	err := s.memory.AddNewLink(newID, shortURL, newUserURL, cfg.FileStoragePath)
 	if err != nil {
 		panic(err)

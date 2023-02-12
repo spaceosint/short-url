@@ -154,10 +154,6 @@ func (f *FileStore) GetNewID(filePath string) uint {
 			maxID = link.ID
 		}
 	}
-	err = cons.file.Close()
-	if err != nil {
-		return maxID
-	}
 	return maxID + 1
 }
 

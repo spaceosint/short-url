@@ -23,7 +23,7 @@ func New(cfg config.Config) (*App, error) {
 	a.h = handlers.New(s, cfg)
 	a.r = gin.Default()
 
-	a.r.Use(gzip.Gzip(gzip.DefaultCompression))
+	a.r.Use(gzip.Gzip(gzip.DefaultCompression, gzip.WithExcludedPaths([]string{"/:Identifier"})))
 
 	a.r.GET("/fwfwrfwfwhfwedscwewfgtgbrgf3r34fwc43c34fcwcxe2d2f43g544g5g34f24f23f4f", a.h.GetUsersURL)
 	a.r.GET("/:Identifier", a.h.GetUserURLByIdentifier)

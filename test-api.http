@@ -1,6 +1,7 @@
 POST http://localhost:8080/
 Content-Type: application/text
 
+
 https://google.com
 
 ###
@@ -10,11 +11,13 @@ Content-Type: application/text
 
 ###
 
-GET http://127.0.0.1:8080/dkK
+GET http://127.0.0.1:8080/dkP
+Accept-Encoding: gzip
 
 ###
 POST http://localhost:8080/api/shorten
 Content-Type: application/text
+Accept-Encoding: gzip
 
 {"url": "https://google.com/new2"}
 

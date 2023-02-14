@@ -85,6 +85,7 @@ func (h *Handler) PostNewUserURL(c *gin.Context) {
 
 	c.String(http.StatusCreated, shortURL)
 }
+
 func (h *Handler) GetUserURLByIdentifier(c *gin.Context) {
 	id := c.Param("Identifier")
 	//OriginalURL, err := h.storage.GetOriginalURL(id) storage.NewInMemory().

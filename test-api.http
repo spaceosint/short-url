@@ -1,0 +1,14 @@
+POST http://localhost:8080/
+Content-Type: application/text
+
+https://google.com/123
+
+###
+
+GET http://localhost:8080/fwfwrfwfwhfwedscwewfgtgbrgf3r34fwc43c34fcwcxe2d2f43g544g5g34f24f23f4f
+Content-Type: application/text
+
+###
+
+GET http://127.0.0.1:8080/dkR
+

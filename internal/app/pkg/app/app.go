@@ -23,12 +23,12 @@ func New(cfg config.Config) (*App, error) {
 	a.h = handlers.New(s, cfg)
 	a.r = gin.Default()
 
-	a.r.Use(gzip.Gzip(gzip.DefaultCompression, gzip.WithExcludedPathsRegexs([]string{"/:Identifier"})))
-
-	a.r.GET("/fwfwrfwfwhfwedscwewfgtgbrgf3r34fwc43c34fcwcxe2d2f43g544g5g34f24f23f4f", a.h.GetUsersURL)
+	//a.r.Use(gzip.Gzip(gzip.DefaultCompression))
+	gzipMW := a.r.Group("/", gzip.Gzip(gzip.DefaultCompression))
+	gzipMW.GET("/fwfwrfwfwhfwedscwewfgtgbrgf3r34fwc43c34fcwcxe2d2f43g544g5g34f24f23f4f", a.h.GetUsersURL)
 	a.r.GET("/:Identifier", a.h.GetUserURLByIdentifier)
-	a.r.POST("/", a.h.PostNewUserURL)
-	a.r.POST("/api/shorten", a.h.PostNewUserURLJSON)
+	gzipMW.POST("/", a.h.PostNewUserURL)
+	gzipMW.POST("/api/shorten", a.h.PostNewUserURLJSON)
 
 	//a.r.RedirectTrailingSlash = false
 	return a, nil

@@ -1,6 +1,6 @@
 POST http://localhost:8080/
 Content-Type: application/text
-
+Accept-Encoding: gzip
 
 https://google.com
 
@@ -8,7 +8,7 @@ https://google.com
 
 GET http://localhost:8080/fwfwrfwfwhfwedscwewfgtgbrgf3r34fwc43c34fcwcxe2d2f43g544g5g34f24f23f4f
 Content-Type: application/text
-
+Accept-Encoding: gzip
 ###
 
 GET http://127.0.0.1:8080/dkP

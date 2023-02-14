@@ -31,6 +31,8 @@ func main() {
 	//if *baseURL != "" {
 	cfg.BaseURL = *baseURL
 	//}
+	//ewqeqweqfef
+
 	fmt.Println(cfg)
 	a, err := app.New(cfg)
 	if err != nil {

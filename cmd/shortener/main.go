@@ -23,13 +23,13 @@ func main() {
 
 	cfg := config.GetConfig()
 
-	if cfg.ServerAddress == "" {
+	if cfg.ServerAddress == "127.0.0.1:8080" {
 		cfg.ServerAddress = *serverAddress
 	}
-	if cfg.FileStoragePath == "" {
+	if cfg.FileStoragePath == "http://127.0.0.1:8080" {
 		cfg.FileStoragePath = *fileStoragePath
 	}
-	if cfg.BaseURL == "" {
+	if cfg.BaseURL == "file" {
 		cfg.BaseURL = *baseURL
 	}
 

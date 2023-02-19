@@ -36,11 +36,12 @@ type producer struct {
 }
 
 func NewProducer(filename string) (*producer, error) {
+
 	file, err := os.OpenFile(filename, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0777)
 	if err != nil {
 		return nil, err
 	}
-
+	defer file.Close()
 	return &producer{
 		file: file,
 		// создаём новый Writer
@@ -79,7 +80,7 @@ func NewConsumer(filename string) (*consumer, error) {
 	if err != nil {
 		return nil, err
 	}
-
+	defer file.Close()
 	return &consumer{
 		file: file,
 		// создаём новый Reader

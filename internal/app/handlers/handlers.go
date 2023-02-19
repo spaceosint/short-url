@@ -1,7 +1,9 @@
 package handlers
 
 import (
+	"bytes"
 	"errors"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/segmentio/encoding/json"
 	"github.com/spaceosint/short-url/internal/config"
@@ -60,11 +62,11 @@ func (h *Handler) PostNewUserURLJSON(c *gin.Context) {
 	}
 	newUserURL.Identifier = shortURL
 
-	//buf := bytes.NewBuffer([]byte{})
-	//encoder := json.NewEncoder(buf)
-	//encoder.SetEscapeHTML(false) // без этой опции символ '&' будет заменён на "\u0026"
-	//encoder.Encode(newUserURL.Identifier)
-	//fmt.Println(buf.String())
+	buf := bytes.NewBuffer([]byte{})
+	encoder := json.NewEncoder(buf)
+	encoder.SetEscapeHTML(false) // без этой опции символ '&' будет заменён на "\u0026"
+	encoder.Encode(newUserURL.Identifier)
+	fmt.Println(buf.String())
 
 	c.IndentedJSON(http.StatusCreated, gin.H{"result": newUserURL.Identifier})
 }

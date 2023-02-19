@@ -20,25 +20,17 @@ type Middleware interface {
 }
 
 func (w gzipWriter) Write(b []byte) (int, error) {
-	// w.Writer будет отвечать за gzip-сжатие, поэтому пишем в него
 	return w.Writer.Write(b)
-}
-
-type responseBodyWriter struct {
-	gin.ResponseWriter
-	Writer io.Writer
 }
 
 func GzipHandle() gin.HandlerFunc {
 
 	return func(c *gin.Context) {
 		// проверяем, что клиент поддерживает gzip-сжатие
-		if !strings.Contains(c.Request.Header.Get("Content-Type"), "gzip") {
+		if !strings.Contains(c.Request.Header.Get("Content-Encoding"), "gzip") {
 			// если gzip не поддерживается, передаём управление
 			// дальше без изменений
 			c.Next()
-
-			//next.ServeHTTP(c.Writer, c.Request)
 			return
 		}
 
@@ -50,6 +42,6 @@ func GzipHandle() gin.HandlerFunc {
 		c.Request.Body = gz
 
 		c.Next()
-		//next.ServeHTTP(gzipWriter{ResponseWriter: c.Writer, Writer: gz}, c.Request)
+
 	}
 }

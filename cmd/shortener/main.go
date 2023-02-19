@@ -16,21 +16,22 @@ func getEnv(key, fallback string) string {
 	return fallback
 }
 func main() {
-	cfg := config.GetConfig()
-
 	serverAddress := flag.String("a", getEnv("SERVER_ADDRESS", "127.0.0.1:8080"), "a string")
 	baseURL := flag.String("b", getEnv("BASE_URL", "http://127.0.0.1:8080"), "a string")
 	fileStoragePath := flag.String("f", getEnv("FILE_STORAGE_PATH", "file"), "a string")
 	flag.Parse()
-	//if *serverAddress != "" {
-	cfg.ServerAddress = *serverAddress
-	//}
-	//if *fileStoragePath != "" {
-	cfg.FileStoragePath = *fileStoragePath
-	//}
-	//if *baseURL != "" {
-	cfg.BaseURL = *baseURL
-	//}
+
+	cfg := config.GetConfig()
+
+	if cfg.ServerAddress == "" {
+		cfg.ServerAddress = *serverAddress
+	}
+	if cfg.FileStoragePath == "" {
+		cfg.FileStoragePath = *fileStoragePath
+	}
+	if cfg.BaseURL == "" {
+		cfg.BaseURL = *baseURL
+	}
 
 	fmt.Println(cfg)
 	a, err := app.New(cfg)

@@ -40,7 +40,7 @@ func NewProducer(filename string) (*producer, error) {
 	if err != nil {
 		return nil, err
 	}
-
+	defer file.Close()
 	return &producer{
 		file: file,
 		// создаём новый Writer
@@ -79,7 +79,7 @@ func NewConsumer(filename string) (*consumer, error) {
 	if err != nil {
 		return nil, err
 	}
-
+	defer file.Close()
 	return &consumer{
 		file: file,
 		// создаём новый Reader

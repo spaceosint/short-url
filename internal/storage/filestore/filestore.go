@@ -117,12 +117,13 @@ func (f *FileStore) AddNewLinkFile(cfg config.Config, originalURL string) (strin
 		ID: newID, OriginalURL: originalURL, ShortURL: shortURL,
 	}
 	fmt.Println(evn)
-	file, err := NewProducer(cfg.FileStoragePath)
+	prod, err := NewProducer(cfg.FileStoragePath)
 	if err != nil {
 
 		return "", err
 	}
-	err = file.WriteEvent(&evn)
+	defer prod.file.Close()
+	err = prod.WriteEvent(&evn)
 	if err != nil {
 		fmt.Println(err)
 		return "", err
@@ -132,12 +133,13 @@ func (f *FileStore) AddNewLinkFile(cfg config.Config, originalURL string) (strin
 }
 func (f *FileStore) GetOriginalURLFile(identifier string, filePath string) (string, error) {
 
-	file, err := NewConsumer(filePath)
+	cons, err := NewConsumer(filePath)
+	defer cons.file.Close()
 	if err != nil {
 		return "", err
 	}
 	for {
-		ev, err := file.ReadEvent()
+		ev, err := cons.ReadEvent()
 		if err != nil {
 			break
 		}
@@ -171,6 +173,7 @@ func (f *FileStore) GetNewIDFile(filePath string) uint {
 func (f *FileStore) GetAllByPathFile(filePath string) []Event {
 	var users []Event
 	cons, err := NewConsumer(filePath)
+	defer cons.file.Close()
 	if err != nil {
 		return nil
 	}

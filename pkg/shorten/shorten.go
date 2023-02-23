@@ -1,4 +1,4 @@
-package storage
+package shorten
 
 import "strings"
 

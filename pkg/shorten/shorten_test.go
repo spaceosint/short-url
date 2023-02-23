@@ -1,4 +1,4 @@
-package storage
+package shorten
 
 import (
 	"github.com/stretchr/testify/assert"

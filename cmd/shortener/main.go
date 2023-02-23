@@ -18,7 +18,7 @@ func getEnv(key, fallback string) string {
 func main() {
 	serverAddress := flag.String("a", getEnv("SERVER_ADDRESS", "127.0.0.1:8080"), "a string")
 	baseURL := flag.String("b", getEnv("BASE_URL", "http://127.0.0.1:8080"), "a string")
-	fileStoragePath := flag.String("f", getEnv("FILE_STORAGE_PATH", "file"), "a string")
+	fileStoragePath := flag.String("f", getEnv("FILE_STORAGE_PATH", ""), "a string")
 	flag.Parse()
 
 	cfg := config.GetConfig()

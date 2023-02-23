@@ -6,12 +6,12 @@ import (
 	"github.com/spaceosint/short-url/internal/app/handlers"
 	"github.com/spaceosint/short-url/internal/config"
 	"github.com/spaceosint/short-url/internal/middleware"
-	"github.com/spaceosint/short-url/internal/storage"
+	"github.com/spaceosint/short-url/internal/storage/inmemory"
 	"log"
 )
 
 type App struct {
-	st storage.Storage
+	st inmemory.Storage
 	h  *handlers.Handler
 	r  *gin.Engine
 	m  middleware.Middleware
@@ -19,7 +19,7 @@ type App struct {
 
 func New(cfg config.Config) (*App, error) {
 	a := &App{}
-	s := storage.NewInMemory()
+	s := inmemory.NewInMemory()
 	a.h = handlers.New(s, cfg)
 	a.r = gin.Default()
 

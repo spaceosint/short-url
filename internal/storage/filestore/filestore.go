@@ -2,7 +2,10 @@ package filestore
 
 import (
 	"bufio"
+	"fmt"
 	"github.com/segmentio/encoding/json"
+	"github.com/spaceosint/short-url/internal/config"
+	"github.com/spaceosint/short-url/pkg/shorten"
 	"os"
 )
 
@@ -14,10 +17,10 @@ type Event struct {
 type FileStore struct {
 }
 type Memory interface {
-	GetOriginalURL(identifier string, filePath string) (string, error)
-	AddNewLink(newID uint, shortURL string, originalURL string, filePath string) error
-	GetNewID(filePath string) uint
-	GetAllByPath(filePath string) []Event
+	GetOriginalURLFile(identifier string, filePath string) (string, error)
+	AddNewLinkFile(cfg config.Config, originalURL string) (string, error)
+	GetNewIDFile(filePath string) uint
+	GetAllByPathFile(filePath string) []Event
 }
 type Producer interface {
 	WriteEvent(event *Event) // для записи события
@@ -40,7 +43,7 @@ func NewProducer(filename string) (*producer, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer file.Close()
+
 	return &producer{
 		file: file,
 		// создаём новый Writer
@@ -79,7 +82,7 @@ func NewConsumer(filename string) (*consumer, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer file.Close()
+
 	return &consumer{
 		file: file,
 		// создаём новый Reader
@@ -104,23 +107,31 @@ func (c *consumer) ReadEvent() (*Event, error) {
 	return &event, nil
 }
 
-func (f *FileStore) AddNewLink(newID uint, shortURL string, originalURL string, filePath string) error {
+func (f *FileStore) AddNewLinkFile(cfg config.Config, originalURL string) (string, error) {
 
+	newID := f.GetNewIDFile(cfg.FileStoragePath)
+
+	shortURL := shorten.ShortenURL(newID)
+	fmt.Println(shortURL)
 	var evn = Event{
 		ID: newID, OriginalURL: originalURL, ShortURL: shortURL,
 	}
-	file, err := NewProducer(filePath)
+	fmt.Println(evn)
+	file, err := NewProducer(cfg.FileStoragePath)
 	if err != nil {
-		return err
+
+		return "", err
 	}
 	err = file.WriteEvent(&evn)
 	if err != nil {
-		return err
+		fmt.Println(err)
+		return "", err
 	}
 
-	return nil
+	return cfg.BaseURL + "/" + shortURL, nil
 }
-func (f *FileStore) GetOriginalURL(identifier string, filePath string) (string, error) {
+func (f *FileStore) GetOriginalURLFile(identifier string, filePath string) (string, error) {
+
 	file, err := NewConsumer(filePath)
 	if err != nil {
 		return "", err
@@ -137,7 +148,7 @@ func (f *FileStore) GetOriginalURL(identifier string, filePath string) (string, 
 	return "", err
 }
 
-func (f *FileStore) GetNewID(filePath string) uint {
+func (f *FileStore) GetNewIDFile(filePath string) uint {
 	var maxID uint = 10000
 
 	cons, err := NewConsumer(filePath)
@@ -157,7 +168,7 @@ func (f *FileStore) GetNewID(filePath string) uint {
 	return maxID + 1
 }
 
-func (f *FileStore) GetAllByPath(filePath string) []Event {
+func (f *FileStore) GetAllByPathFile(filePath string) []Event {
 	var users []Event
 	cons, err := NewConsumer(filePath)
 	if err != nil {
@@ -171,5 +182,6 @@ func (f *FileStore) GetAllByPath(filePath string) []Event {
 		}
 		users = append(users, *link)
 	}
+
 	return users
 }

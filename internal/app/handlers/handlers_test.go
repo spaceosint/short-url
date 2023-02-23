@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"github.com/gin-gonic/gin"
 	"github.com/spaceosint/short-url/internal/config"
-	"github.com/spaceosint/short-url/internal/storage"
+	"github.com/spaceosint/short-url/internal/storage/inmemory"
 	"github.com/stretchr/testify/assert"
 	"net/http/httptest"
 	"testing"
@@ -29,7 +29,7 @@ func TestHandler_PostNewUserURL(t *testing.T) {
 				// Init Endpoint
 				r := gin.New()
 
-				st := storage.NewInMemory()
+				st := inmemory.NewInMemory()
 				cfg := config.GetConfig()
 				r.POST("/", New(st, cfg).PostNewUserURL)
 
@@ -122,7 +122,7 @@ func TestHandler_GetUserURLByIdentifier(t *testing.T) {
 			t.Run(test.name, func(t *testing.T) {
 				// Init Endpoint
 				r := gin.New()
-				st := storage.NewInMemory()
+				st := inmemory.NewInMemory()
 				cfg := config.GetConfig()
 				r.POST("/", New(st, cfg).PostNewUserURL)
 				// Create Request

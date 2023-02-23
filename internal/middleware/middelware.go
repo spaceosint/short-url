@@ -33,7 +33,7 @@ func GzipHandle() gin.HandlerFunc {
 
 	return func(c *gin.Context) {
 		// проверяем, что клиент поддерживает gzip-сжатие
-		if !strings.Contains(c.Request.Header.Get("Content-Type"), "gzip") {
+		if !strings.Contains(c.Request.Header.Get("Content-Encoding"), "gzip") {
 			// если gzip не поддерживается, передаём управление
 			// дальше без изменений
 			c.Next()

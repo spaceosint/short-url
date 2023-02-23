@@ -26,7 +26,7 @@ func main() {
 	if cfg.ServerAddress == "127.0.0.1:8080" {
 		cfg.ServerAddress = *serverAddress
 	}
-	if cfg.FileStoragePath == "file" {
+	if cfg.FileStoragePath == "" {
 		cfg.FileStoragePath = *fileStoragePath
 	}
 	if cfg.BaseURL == "http://127.0.0.1:8080" {

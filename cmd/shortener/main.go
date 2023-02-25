@@ -2,7 +2,6 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"github.com/spaceosint/short-url/internal/app/pkg/app"
 	"github.com/spaceosint/short-url/internal/config"
 	"log"
@@ -16,6 +15,7 @@ func getEnv(key, fallback string) string {
 	return fallback
 }
 func main() {
+
 	serverAddress := flag.String("a", getEnv("SERVER_ADDRESS", "127.0.0.1:8080"), "a string")
 	baseURL := flag.String("b", getEnv("BASE_URL", "http://127.0.0.1:8080"), "a string")
 	fileStoragePath := flag.String("f", getEnv("FILE_STORAGE_PATH", ""), "a string")
@@ -33,7 +33,6 @@ func main() {
 		cfg.BaseURL = *baseURL
 	}
 
-	fmt.Println(cfg)
 	a, err := app.New(cfg)
 	if err != nil {
 		log.Fatal(err)

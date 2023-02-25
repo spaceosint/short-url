@@ -10,15 +10,12 @@ import (
 
 type InMemory struct {
 	lock   sync.Mutex
-	m      map[string]string
 	data   MyStruct
 	memory filestore.FileStore
 }
 
 func NewInMemory() *InMemory {
-	return &InMemory{
-		m: make(map[string]string),
-	}
+	return &InMemory{}
 }
 
 type MyStruct struct {

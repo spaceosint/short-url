@@ -151,7 +151,7 @@ func (h *Handler) GetUserURLByIdentifier(c *gin.Context) {
 		return
 	}
 
-	OriginalURL, err := h.storage.GetOriginalURL(id)
+	OriginalURL, err := h.storage.GetOriginalURL(h.cfg, id)
 	if errors.Is(err, inmemory.ErrNotFound) {
 		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "URL not found"})
 		return

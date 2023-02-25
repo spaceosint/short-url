@@ -12,7 +12,7 @@ var (
 
 type Storage interface {
 	GetAll() ([]MyStruct, error)
-	GetOriginalURL(Identifier string) (string, error)
+	GetOriginalURL(cfg config.Config, Identifier string) (string, error)
 	GetShortURL(uuid any, cfg config.Config, newUserURL string) (string, error)
 	GetAllByCookie(cfg config.Config, uuid any) ([]respData, error)
 }

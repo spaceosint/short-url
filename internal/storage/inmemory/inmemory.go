@@ -40,12 +40,12 @@ func (s *InMemory) GetAll() ([]MyStruct, error) {
 	}
 	return []MyStruct{}, ErrNotFound
 }
-func (s *InMemory) GetOriginalURL(Identifier string) (string, error) {
+func (s *InMemory) GetOriginalURL(cfg config.Config, Identifier string) (string, error) {
 	s.lock.Lock()
 	defer s.lock.Unlock()
 
 	for id := range MySlice {
-		if MySlice[id].Data.ShortURL == Identifier {
+		if MySlice[id].Data.ShortURL == cfg.BaseURL+"/"+Identifier {
 			return MySlice[id].Data.OriginalURL, nil
 		}
 	}

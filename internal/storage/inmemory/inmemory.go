@@ -1,6 +1,7 @@
 package inmemory
 
 import (
+	"fmt"
 	"github.com/spaceosint/short-url/internal/config"
 	"github.com/spaceosint/short-url/internal/storage/filestore"
 	"github.com/spaceosint/short-url/pkg/shorten"
@@ -10,6 +11,7 @@ import (
 type InMemory struct {
 	lock   sync.Mutex
 	m      map[string]string
+	data   MyStruct
 	memory filestore.FileStore
 }
 
@@ -19,29 +21,38 @@ func NewInMemory() *InMemory {
 	}
 }
 
-type UsersURL struct {
-	uuid string
-	url  map[string]string
+type MyStruct struct {
+	UUID string
+	Data respData
+}
+type respData struct {
+	ShortURL    string `json:"short_url"`
+	OriginalURL string `json:"original_url"`
 }
 
+var MySlice []MyStruct
 var ID uint = 10000
 
-func (s *InMemory) GetAll() (map[string]string, error) {
+func (s *InMemory) GetAll() ([]MyStruct, error) {
 	s.lock.Lock()
 	defer s.lock.Unlock()
-
-	if s.m != nil {
-		return s.m, nil
+	fmt.Println("MySlice")
+	fmt.Println(MySlice)
+	if MySlice != nil {
+		return MySlice, nil
 	}
-	return s.m, ErrNotFound
+	return []MyStruct{}, ErrNotFound
 }
 func (s *InMemory) GetOriginalURL(Identifier string) (string, error) {
 	s.lock.Lock()
 	defer s.lock.Unlock()
 
-	if v, ok := s.m[Identifier]; ok {
-		return v, nil
+	for id := range MySlice {
+		if MySlice[id].Data.ShortURL == Identifier {
+			return MySlice[id].Data.OriginalURL, nil
+		}
 	}
+
 	return "", ErrNotFound
 
 }
@@ -53,16 +64,23 @@ func (s *InMemory) GetShortURL(uuid any, cfg config.Config, newUserURL string) (
 	ID++
 	shortURL := shorten.ShortenURL(ID)
 
-	//append(Users, )
-	//
-	//s.m = map[string]map[string]string{
-	//	uuid.(string): {
-	//		shortURL: newUserURL,
-	//	},
-	//}
-	//s.m[uuid.(string)] = url
-
-	s.m[shortURL] = newUserURL
+	var newUser = MyStruct{UUID: uuid.(string), Data: respData{ShortURL: shortURL, OriginalURL: newUserURL}}
+	MySlice = append(MySlice, newUser)
 
 	return cfg.BaseURL + "/" + shortURL, nil
+}
+func (s *InMemory) GetAllByCookie(uuid any) ([]respData, error) {
+	s.lock.Lock()
+	defer s.lock.Unlock()
+	var resp []respData
+	if MySlice != nil {
+		for id := range MySlice {
+			if MySlice[id].UUID == uuid.(string) {
+				resp = append(resp, MySlice[id].Data)
+			}
+		}
+		return resp, nil
+
+	}
+	return []respData{}, ErrNotFound
 }

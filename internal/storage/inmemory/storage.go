@@ -11,9 +11,10 @@ var (
 )
 
 type Storage interface {
-	GetAll() (map[string]string, error)
+	GetAll() ([]MyStruct, error)
 	GetOriginalURL(Identifier string) (string, error)
 	GetShortURL(uuid any, cfg config.Config, newUserURL string) (string, error)
+	GetAllByCookie(uuid any) ([]respData, error)
 }
 
 type UserURL struct {

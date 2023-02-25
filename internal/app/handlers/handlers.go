@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"errors"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/segmentio/encoding/json"
 	"github.com/spaceosint/short-url/internal/config"
@@ -47,9 +48,20 @@ func (h *Handler) GetUserURL(c *gin.Context) {
 	uuid, _ := c.Get("userID")
 	if h.cfg.FileStoragePath != "" {
 		userURLS := h.fileStorage.GetAllByCookieFile(uuid, h.cfg.FileStoragePath)
-
+		if userURLS == nil {
+			c.Status(http.StatusNoContent)
+			return
+		}
 		c.IndentedJSON(http.StatusOK, userURLS)
 	}
+
+	userURLS, err := h.storage.GetAllByCookie(uuid)
+	if err != nil {
+		c.Status(http.StatusNoContent)
+		return
+	}
+
+	c.IndentedJSON(http.StatusOK, userURLS)
 
 }
 func (h *Handler) GetUsersURL(c *gin.Context) {
@@ -60,6 +72,8 @@ func (h *Handler) GetUsersURL(c *gin.Context) {
 		return
 	}
 	users, err := h.storage.GetAll()
+	fmt.Println("users")
+	fmt.Println(users, err)
 	if err != nil {
 		c.Status(http.StatusNotFound)
 		return

@@ -197,8 +197,8 @@ func (f *FileStore) GetAllByPathFile(filePath string) []Event {
 }
 
 type respData struct {
-	OriginalURL string `json:"original_url"`
 	ShortURL    string `json:"short_url"`
+	OriginalURL string `json:"original_url"`
 }
 
 func (f *FileStore) GetAllByCookieFile(uuid any, filePath string) []respData {

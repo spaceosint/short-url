@@ -38,6 +38,20 @@ func New(storage inmemory.Storage, config config.Config) *Handler {
 	}
 }
 
+type RespStruct struct {
+	OriginalURL string `json:"original_url"`
+	ShortURL    string `json:"short_url"`
+}
+
+func (h *Handler) GetUserURL(c *gin.Context) {
+	uuid, _ := c.Get("userID")
+	if h.cfg.FileStoragePath != "" {
+		userURLS := h.fileStorage.GetAllByCookieFile(uuid, h.cfg.FileStoragePath)
+
+		c.IndentedJSON(http.StatusOK, userURLS)
+	}
+
+}
 func (h *Handler) GetUsersURL(c *gin.Context) {
 
 	if h.cfg.FileStoragePath != "" {

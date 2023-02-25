@@ -15,6 +15,7 @@ type Event struct {
 	OriginalURL string `json:"original_url"`
 	ShortURL    string `json:"short_url"`
 }
+
 type FileStore struct {
 }
 type Memory interface {
@@ -22,6 +23,7 @@ type Memory interface {
 	AddNewLinkFile(cfg config.Config, originalURL string) (string, error)
 	GetNewIDFile(filePath string) uint
 	GetAllByPathFile(filePath string) []Event
+	GetAllByCookieFile(uuid any, filePath string) []Event
 }
 type Producer interface {
 	WriteEvent(event *Event) // для записи события
@@ -191,4 +193,37 @@ func (f *FileStore) GetAllByPathFile(filePath string) []Event {
 	}
 
 	return users
+
+}
+
+type respData struct {
+	OriginalURL string `json:"original_url"`
+	ShortURL    string `json:"short_url"`
+}
+
+func (f *FileStore) GetAllByCookieFile(uuid any, filePath string) []respData {
+	var userURLS []respData
+	cons, err := NewConsumer(filePath)
+	defer cons.file.Close()
+	if err != nil {
+		return nil
+	}
+
+	for {
+		link, err := cons.ReadEvent()
+		if err != nil {
+			break
+		}
+
+		if link.Uuid == uuid {
+			new := respData{
+				OriginalURL: link.OriginalURL,
+				ShortURL:    link.ShortURL,
+			}
+
+			userURLS = append(userURLS, new)
+		}
+	}
+
+	return userURLS
 }

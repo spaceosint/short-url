@@ -23,5 +23,9 @@ Cookie:
 
 {"url": "https://google.com/new2"}
 
+###
 
+GET http://localhost:8080/api/user/urls
+Content-Type: application/text
+Accept-Encoding: gzip
 ###

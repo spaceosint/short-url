@@ -13,7 +13,7 @@ var (
 type Storage interface {
 	GetAll() (map[string]string, error)
 	GetOriginalURL(Identifier string) (string, error)
-	GetShortURL(cfg config.Config, newUserURL string) (string, error)
+	GetShortURL(uuid any, cfg config.Config, newUserURL string) (string, error)
 }
 
 type UserURL struct {

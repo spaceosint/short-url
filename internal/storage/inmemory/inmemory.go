@@ -19,6 +19,11 @@ func NewInMemory() *InMemory {
 	}
 }
 
+type UsersURL struct {
+	uuid string
+	url  map[string]string
+}
+
 var ID uint = 10000
 
 func (s *InMemory) GetAll() (map[string]string, error) {
@@ -41,12 +46,21 @@ func (s *InMemory) GetOriginalURL(Identifier string) (string, error) {
 
 }
 
-func (s *InMemory) GetShortURL(cfg config.Config, newUserURL string) (string, error) {
+func (s *InMemory) GetShortURL(uuid any, cfg config.Config, newUserURL string) (string, error) {
 	s.lock.Lock()
 	defer s.lock.Unlock()
 
 	ID++
 	shortURL := shorten.ShortenURL(ID)
+
+	//append(Users, )
+	//
+	//s.m = map[string]map[string]string{
+	//	uuid.(string): {
+	//		shortURL: newUserURL,
+	//	},
+	//}
+	//s.m[uuid.(string)] = url
 
 	s.m[shortURL] = newUserURL
 

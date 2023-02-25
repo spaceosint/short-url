@@ -60,9 +60,10 @@ func (h *Handler) PostNewUserURLJSON(c *gin.Context) {
 		c.IndentedJSON(http.StatusBadRequest, MyError{"bed_request_json"})
 		return
 	}
-
+	uuid, _ := c.Get("userID")
 	if h.cfg.FileStoragePath != "" {
-		resp, err := h.fileStorage.AddNewLinkFile(h.cfg, newUserURL.OriginalURL)
+
+		resp, err := h.fileStorage.AddNewLinkFile(uuid, h.cfg, newUserURL.OriginalURL)
 		if err != nil {
 			c.IndentedJSON(http.StatusBadRequest, MyError{"bed_request"})
 			return
@@ -71,7 +72,7 @@ func (h *Handler) PostNewUserURLJSON(c *gin.Context) {
 		return
 	}
 
-	shortURL, err := h.storage.GetShortURL(h.cfg, newUserURL.OriginalURL)
+	shortURL, err := h.storage.GetShortURL(uuid, h.cfg, newUserURL.OriginalURL)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -82,9 +83,11 @@ func (h *Handler) PostNewUserURLJSON(c *gin.Context) {
 func (h *Handler) PostNewUserURL(c *gin.Context) {
 
 	newUserURL, err := c.GetRawData()
+	uuid, _ := c.Get("userID")
 
 	if h.cfg.FileStoragePath != "" {
-		resp, err := h.fileStorage.AddNewLinkFile(h.cfg, string(newUserURL))
+
+		resp, err := h.fileStorage.AddNewLinkFile(uuid, h.cfg, string(newUserURL))
 		if err != nil {
 			c.IndentedJSON(http.StatusBadRequest, MyError{"bed_request"})
 			return
@@ -98,7 +101,7 @@ func (h *Handler) PostNewUserURL(c *gin.Context) {
 		return
 	}
 
-	shortURL, err := h.storage.GetShortURL(h.cfg, string(newUserURL))
+	shortURL, err := h.storage.GetShortURL(uuid, h.cfg, string(newUserURL))
 	if err != nil {
 		log.Fatal(err)
 	}

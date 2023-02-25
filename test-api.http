@@ -18,6 +18,8 @@ Accept-Encoding: gzip
 POST http://localhost:8080/api/shorten
 Content-Type: application/text
 Accept-Encoding: gzip
+Cookie:
+
 
 {"url": "https://google.com/new2"}
 

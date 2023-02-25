@@ -10,6 +10,7 @@ import (
 )
 
 type Event struct {
+	Uuid        any    `json:"uuid"`
 	ID          uint   `json:"id"`
 	OriginalURL string `json:"original_url"`
 	ShortURL    string `json:"short_url"`
@@ -107,16 +108,19 @@ func (c *consumer) ReadEvent() (*Event, error) {
 	return &event, nil
 }
 
-func (f *FileStore) AddNewLinkFile(cfg config.Config, originalURL string) (string, error) {
+func (f *FileStore) AddNewLinkFile(uuid any, cfg config.Config, originalURL string) (string, error) {
 
 	newID := f.GetNewIDFile(cfg.FileStoragePath)
 
 	shortURL := shorten.ShortenURL(newID)
-	fmt.Println(shortURL)
+
 	var evn = Event{
-		ID: newID, OriginalURL: originalURL, ShortURL: shortURL,
+		Uuid:        uuid,
+		ID:          newID,
+		OriginalURL: originalURL,
+		ShortURL:    shortURL,
 	}
-	fmt.Println(evn)
+
 	prod, err := NewProducer(cfg.FileStoragePath)
 	if err != nil {
 

@@ -47,7 +47,7 @@ type RespStruct struct {
 func (h *Handler) GetUserURL(c *gin.Context) {
 	uuid, _ := c.Get("userID")
 	if h.cfg.FileStoragePath != "" {
-		userURLS := h.fileStorage.GetAllByCookieFile(uuid, h.cfg.FileStoragePath)
+		userURLS := h.fileStorage.GetAllByCookieFile(h.cfg, uuid, h.cfg.FileStoragePath)
 		if userURLS == nil {
 			c.Status(http.StatusNoContent)
 			return
@@ -55,7 +55,7 @@ func (h *Handler) GetUserURL(c *gin.Context) {
 		c.IndentedJSON(http.StatusOK, userURLS)
 	}
 
-	userURLS, err := h.storage.GetAllByCookie(uuid)
+	userURLS, err := h.storage.GetAllByCookie(h.cfg, uuid)
 	if err != nil {
 		c.Status(http.StatusNoContent)
 		return

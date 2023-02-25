@@ -23,7 +23,7 @@ type Memory interface {
 	AddNewLinkFile(cfg config.Config, originalURL string) (string, error)
 	GetNewIDFile(filePath string) uint
 	GetAllByPathFile(filePath string) []Event
-	GetAllByCookieFile(uuid any, filePath string) []Event
+	GetAllByCookieFile(cfg config.Config, uuid any, filePath string) []respData
 }
 type Producer interface {
 	WriteEvent(event *Event) // для записи события
@@ -201,7 +201,7 @@ type respData struct {
 	OriginalURL string `json:"original_url"`
 }
 
-func (f *FileStore) GetAllByCookieFile(uuid any, filePath string) []respData {
+func (f *FileStore) GetAllByCookieFile(cfg config.Config, uuid any, filePath string) []respData {
 	var userURLS []respData
 	cons, err := NewConsumer(filePath)
 	defer cons.file.Close()
@@ -218,7 +218,7 @@ func (f *FileStore) GetAllByCookieFile(uuid any, filePath string) []respData {
 		if link.Uuid == uuid {
 			new := respData{
 				OriginalURL: link.OriginalURL,
-				ShortURL:    link.ShortURL,
+				ShortURL:    cfg.BaseURL + "/" + link.ShortURL,
 			}
 
 			userURLS = append(userURLS, new)

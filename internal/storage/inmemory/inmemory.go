@@ -61,18 +61,19 @@ func (s *InMemory) GetShortURL(uuid any, cfg config.Config, newUserURL string) (
 	ID++
 	shortURL := shorten.ShortenURL(ID)
 
-	var newUser = MyStruct{UUID: uuid.(string), Data: respData{ShortURL: shortURL, OriginalURL: newUserURL}}
+	var newUser = MyStruct{UUID: uuid.(string), Data: respData{ShortURL: cfg.BaseURL + "/" + shortURL, OriginalURL: newUserURL}}
 	MySlice = append(MySlice, newUser)
 
 	return cfg.BaseURL + "/" + shortURL, nil
 }
-func (s *InMemory) GetAllByCookie(uuid any) ([]respData, error) {
+func (s *InMemory) GetAllByCookie(cfg config.Config, uuid any) ([]respData, error) {
 	s.lock.Lock()
 	defer s.lock.Unlock()
 	var resp []respData
 	if MySlice != nil {
 		for id := range MySlice {
 			if MySlice[id].UUID == uuid.(string) {
+
 				resp = append(resp, MySlice[id].Data)
 			}
 		}

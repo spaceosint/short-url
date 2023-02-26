@@ -19,6 +19,7 @@ func main() {
 	serverAddress := flag.String("a", getEnv("SERVER_ADDRESS", "127.0.0.1:8080"), "a string")
 	baseURL := flag.String("b", getEnv("BASE_URL", "http://127.0.0.1:8080"), "a string")
 	fileStoragePath := flag.String("f", getEnv("FILE_STORAGE_PATH", ""), "a string")
+	databaseDSN := flag.String("f", getEnv("DATABASE_DSN", "postgres://postgres:postgres@localhost:5432/postgres"), "a string")
 	flag.Parse()
 
 	cfg := config.GetConfig()
@@ -31,6 +32,9 @@ func main() {
 	}
 	if cfg.BaseURL == "http://127.0.0.1:8080" {
 		cfg.BaseURL = *baseURL
+	}
+	if cfg.DatabaseDSN == "postgres://postgres:postgres@localhost:5432/postgres" {
+		cfg.DatabaseDSN = *databaseDSN
 	}
 
 	a, err := app.New(cfg)

@@ -1,9 +1,11 @@
 package handlers
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/jackc/pgx/v4"
 	"github.com/segmentio/encoding/json"
 	"github.com/spaceosint/short-url/internal/config"
 	"github.com/spaceosint/short-url/internal/storage/filestore"
@@ -92,6 +94,22 @@ func (h *Handler) GetUsersURL(c *gin.Context) {
 	}
 
 	c.IndentedJSON(http.StatusOK, users)
+}
+func (h *Handler) GetPostgreSQLPing(c *gin.Context) {
+	conn, err := pgx.Connect(context.Background(), h.cfg.DatabaseDSN)
+	if err != nil {
+		c.Status(http.StatusInternalServerError)
+		panic(err)
+	}
+	defer conn.Close(context.Background())
+
+	err = conn.Ping(context.Background())
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "unable to connect to database"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "pong"})
 }
 func (h *Handler) PostNewUserURLJSON(c *gin.Context) {
 	var newUserURL inmemory.UserURL

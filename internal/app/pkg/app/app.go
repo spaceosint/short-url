@@ -32,6 +32,7 @@ func New(cfg config.Config) (*App, error) {
 	a.r.GET("/:Identifier", a.h.GetUserURLByIdentifier)
 	a.r.POST("/", a.h.PostNewUserURL)
 	a.r.POST("/api/shorten", a.h.PostNewUserURLJSON)
+	a.r.GET("/ping", a.h.GetPostgreSQLPing)
 
 	//a.r.RedirectTrailingSlash = false
 	return a, nil

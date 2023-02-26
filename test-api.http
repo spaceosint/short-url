@@ -29,3 +29,8 @@ GET http://localhost:8080/api/user/urls
 Content-Type: application/text
 Accept-Encoding: gzip
 ###
+
+GET http://localhost:8080/ping
+Content-Type: application/text
+Accept-Encoding: gzip
+###

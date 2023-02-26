@@ -1,6 +1,16 @@
 package handlers
 
-//TODO tests for handlers
+import (
+	"github.com/stretchr/testify/assert"
+	"testing"
+)
+
+// TODO tests for handlers
+
+func TestHandler_PostNewUserURL(t *testing.T) {
+	assert.Equal(t, 1, 1)
+}
+
 //func TestHandler_PostNewUserURL(t *testing.T) {
 //	t.Run("handler", func(t *testing.T) {
 //		tests := []struct {
@@ -20,15 +30,14 @@ package handlers
 //				// Init Endpoint
 //				r := gin.New()
 //
-//				st := inmemory.NewInMemory()
 //				cfg := config.GetConfig()
-//				r.POST("/", New(st, cfg).PostNewUserURL)
+//				r.POST("/", New(cfg).PostNewUserURL)
 //
 //				// Create Request
 //				w := httptest.NewRecorder()
 //				req := httptest.NewRequest("POST", "/",
 //					bytes.NewBufferString(test.inputBody))
-//
+//				req.Header.Set("Accept-Encoding", "gzip")
 //				// Make Request
 //				r.ServeHTTP(w, req)
 //

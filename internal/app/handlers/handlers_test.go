@@ -1,5 +1,6 @@
 package handlers
 
+//TODO tests for handlers
 //func TestHandler_PostNewUserURL(t *testing.T) {
 //	t.Run("handler", func(t *testing.T) {
 //		tests := []struct {

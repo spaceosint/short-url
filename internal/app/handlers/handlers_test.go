@@ -3,11 +3,13 @@ package handlers
 import (
 	"github.com/stretchr/testify/assert"
 	"testing"
+	"time"
 )
 
 // TODO tests for handlers
 
 func TestHandler_PostNewUserURL(t *testing.T) {
+	time.Sleep(1 * time.Second)
 	assert.Equal(t, 1, 1)
 }
 

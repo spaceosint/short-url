@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"github.com/segmentio/encoding/json"
 	"github.com/spaceosint/short-url/internal/config"
-	"github.com/spaceosint/short-url/pkg/shorten"
+	"github.com/spaceosint/short-url/internal/shorten"
 	"os"
 )
 

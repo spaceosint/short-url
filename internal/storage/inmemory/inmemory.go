@@ -3,8 +3,8 @@ package inmemory
 import (
 	"fmt"
 	"github.com/spaceosint/short-url/internal/config"
+	"github.com/spaceosint/short-url/internal/shorten"
 	"github.com/spaceosint/short-url/internal/storage/filestore"
-	"github.com/spaceosint/short-url/pkg/shorten"
 	"sync"
 )
 

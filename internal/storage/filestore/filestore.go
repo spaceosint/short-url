@@ -2,6 +2,7 @@ package filestore
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"github.com/segmentio/encoding/json"
 	"github.com/spaceosint/short-url/internal/config"
@@ -23,7 +24,7 @@ type Memory interface {
 	AddNewLinkFile(cfg config.Config, originalURL string) (string, error)
 	GetNewIDFile(filePath string) uint
 	GetAllByPathFile(filePath string) []Event
-	GetAllByCookieFile(cfg config.Config, uuid any, filePath string) []respData
+	GetAllByCookieFile(cfg config.Config, uuid any, filePath string) ([]respData, error)
 }
 type Producer interface {
 	WriteEvent(event *Event) // для записи события
@@ -201,12 +202,17 @@ type respData struct {
 	OriginalURL string `json:"original_url"`
 }
 
-func (f *FileStore) GetAllByCookieFile(cfg config.Config, uuid any, filePath string) []respData {
+var (
+	ErrNotFound      = errors.New("not found")
+	ErrAlreadyExists = errors.New("already exists")
+)
+
+func (f *FileStore) GetAllByCookieFile(cfg config.Config, uuid any, filePath string) ([]respData, error) {
 	var userURLS []respData
 	cons, err := NewConsumer(filePath)
 	defer cons.file.Close()
 	if err != nil {
-		return nil
+		return nil, ErrAlreadyExists
 	}
 
 	for {
@@ -224,6 +230,9 @@ func (f *FileStore) GetAllByCookieFile(cfg config.Config, uuid any, filePath str
 			userURLS = append(userURLS, new)
 		}
 	}
+	if userURLS == nil {
+		return userURLS, ErrNotFound
+	}
 
-	return userURLS
+	return userURLS, nil
 }

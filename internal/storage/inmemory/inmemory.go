@@ -77,6 +77,9 @@ func (s *InMemory) GetAllByCookie(cfg config.Config, uuid any) ([]respData, erro
 				resp = append(resp, MySlice[id].Data)
 			}
 		}
+		if resp == nil {
+			return resp, ErrNotFound
+		}
 		return resp, nil
 
 	}

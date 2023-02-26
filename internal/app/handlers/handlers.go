@@ -47,7 +47,15 @@ type RespStruct struct {
 func (h *Handler) GetUserURL(c *gin.Context) {
 	uuid, _ := c.Get("userID")
 	if h.cfg.FileStoragePath != "" {
-		userURLS := h.fileStorage.GetAllByCookieFile(h.cfg, uuid, h.cfg.FileStoragePath)
+		userURLS, err := h.fileStorage.GetAllByCookieFile(h.cfg, uuid, h.cfg.FileStoragePath)
+		if errors.Is(err, inmemory.ErrNotFound) {
+			c.IndentedJSON(http.StatusNoContent, gin.H{"message": "URL not found"})
+			return
+		}
+		if errors.Is(err, inmemory.ErrAlreadyExists) {
+			c.IndentedJSON(http.StatusAlreadyReported, gin.H{"message": "AlreadyExists"})
+			return
+		}
 		if userURLS == nil {
 			c.Status(http.StatusNoContent)
 			return
@@ -56,8 +64,12 @@ func (h *Handler) GetUserURL(c *gin.Context) {
 	}
 
 	userURLS, err := h.storage.GetAllByCookie(h.cfg, uuid)
-	if err != nil {
-		c.Status(http.StatusNoContent)
+	if errors.Is(err, inmemory.ErrNotFound) {
+		c.IndentedJSON(http.StatusNoContent, gin.H{"message": "URL not found"})
+		return
+	}
+	if errors.Is(err, inmemory.ErrAlreadyExists) {
+		c.IndentedJSON(http.StatusAlreadyReported, gin.H{"message": "AlreadyExists"})
 		return
 	}
 

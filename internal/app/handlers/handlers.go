@@ -34,9 +34,10 @@ type Handler struct {
 	fileStorage filestore.FileStore
 }
 
-func New(config config.Config) *Handler {
+func New(storage inmemory.Storage, config config.Config) *Handler {
 	return &Handler{
-		cfg: config,
+		cfg:     config,
+		storage: storage,
 	}
 }
 

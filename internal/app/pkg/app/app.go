@@ -1,7 +1,6 @@
 package app
 
 import (
-	"github.com/gin-contrib/gzip"
 	"github.com/gin-gonic/gin"
 	"github.com/spaceosint/short-url/internal/app/handlers"
 	"github.com/spaceosint/short-url/internal/config"
@@ -23,8 +22,8 @@ func New(cfg config.Config) (*App, error) {
 	a.h = handlers.New(s, cfg)
 	a.r = gin.Default()
 
-	a.r.Use(middleware.GzipHandle())
-	a.r.Use(gzip.Gzip(gzip.DefaultCompression))
+	a.r.Use(middleware.GzipReaderHandle())
+	a.r.Use(middleware.GzipWriterHandler())
 
 	a.r.GET("/fwfwrfwfwhfwedscwewfgtgbrgf3r34fwc43c34fcwcxe2d2f43g544g5g34f24f23f4f", a.h.GetUsersURL)
 	a.r.GET("/:Identifier", a.h.GetUserURLByIdentifier)

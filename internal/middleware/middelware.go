@@ -4,32 +4,54 @@ import (
 	"compress/gzip"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"io"
 	"net/http"
 	"strings"
 )
-
-type gzipWriter struct {
-	http.ResponseWriter
-	Writer io.Writer
-}
 
 type Middleware interface {
 	GzipHandle() http.Header
 	TestM() gin.HandlerFunc
 }
 
-func (w gzipWriter) Write(b []byte) (int, error) {
-	// w.Writer будет отвечать за gzip-сжатие, поэтому пишем в него
-	return w.Writer.Write(b)
+func (w gzipWriter) Write(data []byte) (int, error) {
+	return w.gw.Write(data)
 }
 
-type responseBodyWriter struct {
+type gzipWriter struct {
+	gw *gzip.Writer
 	gin.ResponseWriter
-	Writer io.Writer
 }
 
-func GzipHandle() gin.HandlerFunc {
+func GzipWriterHandler() gin.HandlerFunc {
+	return func(c *gin.Context) {
+
+		if !strings.Contains(c.Request.Header.Get("Accept-Encoding"), "gzip") {
+			// если gzip не поддерживается, передаём управление
+			// дальше без изменений
+			c.Next()
+			return
+		}
+
+		// Создание gzip.Writer с настройкой BestSpeed
+		gz, err := gzip.NewWriterLevel(c.Writer, gzip.BestSpeed)
+		if err != nil {
+			c.AbortWithError(http.StatusInternalServerError, err)
+			return
+		}
+		defer gz.Close()
+
+		// Создание нового gzipWriter
+		gw := gzipWriter{gw: gz, ResponseWriter: c.Writer}
+
+		// Замена c.Writer на gzipWriter для записи сжатых данных
+		c.Writer = &gw
+
+		// Вызов следующего обработчика в цепочке
+		c.Next()
+	}
+}
+
+func GzipReaderHandle() gin.HandlerFunc {
 
 	return func(c *gin.Context) {
 		// проверяем, что клиент поддерживает gzip-сжатие

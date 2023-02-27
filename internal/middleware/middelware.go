@@ -40,6 +40,7 @@ func GzipWriterHandler() gin.HandlerFunc {
 		}
 		defer gz.Close()
 
+		c.Writer.Header().Set("Content-Encoding", "gzip")
 		// Создание нового gzipWriter
 		gw := gzipWriter{gw: gz, ResponseWriter: c.Writer}
 

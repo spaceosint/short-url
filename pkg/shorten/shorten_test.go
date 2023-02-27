@@ -1,4 +1,4 @@
-package storage
+package shorten
 
 import (
 	"github.com/stretchr/testify/assert"
@@ -8,7 +8,7 @@ import (
 func TestShorten(t *testing.T) {
 	t.Run("returns analphanumeric short identifier", func(t *testing.T) {
 		type testCase struct {
-			id       int
+			id       uint
 			expected string
 		}
 		testCases := []testCase{

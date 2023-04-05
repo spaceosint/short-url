@@ -3,8 +3,9 @@ module github.com/spaceosint/short-url
 go 1.20
 
 require (
-	github.com/Yandex-Practicum/go-autotests v0.7.9
+	github.com/caarlos0/env/v6 v6.10.1
 	github.com/gin-gonic/gin v1.8.2
+	github.com/segmentio/encoding v0.3.6
 	github.com/stretchr/testify v1.8.1
 )
 
@@ -22,6 +23,7 @@ require (
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/pelletier/go-toml/v2 v2.0.6 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
+	github.com/segmentio/asm v1.1.3 // indirect
 	github.com/ugorji/go/codec v1.2.7 // indirect
 	golang.org/x/crypto v0.0.0-20211215153901-e495a2d5b3d3 // indirect
 	golang.org/x/net v0.4.0 // indirect

@@ -6,7 +6,9 @@ import (
 	"github.com/segmentio/encoding/json"
 	"github.com/spaceosint/short-url/internal/config"
 	"github.com/spaceosint/short-url/pkg/shorten"
+	"io"
 	"os"
+	"strconv"
 )
 
 type Event struct {
@@ -15,13 +17,15 @@ type Event struct {
 	ShortURL    string `json:"short_url"`
 }
 type FileStore struct {
+	cfg config.Config
 }
-type Memory interface {
-	GetOriginalURLFile(identifier string, filePath string) (string, error)
-	AddNewLinkFile(cfg config.Config, originalURL string) (string, error)
-	GetNewIDFile(filePath string) uint
-	GetAllByPathFile(filePath string) []Event
+
+func NewInFileStore(config config.Config) *FileStore {
+	return &FileStore{
+		cfg: config,
+	}
 }
+
 type Producer interface {
 	WriteEvent(event *Event) // для записи события
 	Close() error            // для закрытия ресурса (файла)
@@ -107,19 +111,18 @@ func (c *consumer) ReadEvent() (*Event, error) {
 	return &event, nil
 }
 
-func (f *FileStore) AddNewLinkFile(cfg config.Config, originalURL string) (string, error) {
+func (f *FileStore) GetShortURL(newUserURL string) (string, error) {
 
-	newID := f.GetNewIDFile(cfg.FileStoragePath)
+	newID := f.GetNewIDFile(f.cfg.FileStoragePath)
 
 	shortURL := shorten.ShortenURL(newID)
 	fmt.Println(shortURL)
 	var evn = Event{
-		ID: newID, OriginalURL: originalURL, ShortURL: shortURL,
+		ID: newID, OriginalURL: newUserURL, ShortURL: shortURL,
 	}
 	fmt.Println(evn)
-	prod, err := NewProducer(cfg.FileStoragePath)
+	prod, err := NewProducer(f.cfg.FileStoragePath)
 	if err != nil {
-
 		return "", err
 	}
 	defer prod.file.Close()
@@ -129,11 +132,11 @@ func (f *FileStore) AddNewLinkFile(cfg config.Config, originalURL string) (strin
 		return "", err
 	}
 
-	return cfg.BaseURL + "/" + shortURL, nil
+	return f.cfg.BaseURL + "/" + shortURL, nil
 }
-func (f *FileStore) GetOriginalURLFile(identifier string, filePath string) (string, error) {
+func (f *FileStore) GetOriginalURL(identifier string) (string, error) {
 
-	cons, err := NewConsumer(filePath)
+	cons, err := NewConsumer(f.cfg.FileStoragePath)
 	defer cons.file.Close()
 	if err != nil {
 		return "", err
@@ -187,4 +190,27 @@ func (f *FileStore) GetAllByPathFile(filePath string) []Event {
 	}
 
 	return users
+}
+
+func (f *FileStore) GetAll() (map[string]string, error) {
+	events := make(map[string]string)
+	cons, err := NewConsumer(f.cfg.FileStoragePath)
+	if err != nil {
+		return events, err
+	}
+	defer cons.file.Close()
+
+	for {
+		event, err := cons.ReadEvent()
+		if err != nil {
+			if err == io.EOF {
+				break
+			}
+			return events, err
+		}
+		key := strconv.Itoa(int(event.ID))
+		events[key] = event.OriginalURL
+	}
+	fmt.Println(events)
+	return events, nil
 }

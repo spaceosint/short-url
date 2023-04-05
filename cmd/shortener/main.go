@@ -15,6 +15,8 @@ func getEnv(key, fallback string) string {
 	}
 	return fallback
 }
+
+// main
 func main() {
 	serverAddress := flag.String("a", getEnv("SERVER_ADDRESS", "127.0.0.1:8080"), "a string")
 	baseURL := flag.String("b", getEnv("BASE_URL", "http://127.0.0.1:8080"), "a string")
@@ -22,7 +24,7 @@ func main() {
 	flag.Parse()
 
 	cfg := config.GetConfig()
-
+	//awqd
 	if cfg.ServerAddress == "127.0.0.1:8080" {
 		cfg.ServerAddress = *serverAddress
 	}

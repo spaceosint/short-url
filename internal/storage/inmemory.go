@@ -2,81 +2,57 @@ package storage
 
 import (
 	"fmt"
-	"strconv"
+	"github.com/spaceosint/short-url/internal/config"
+	"github.com/spaceosint/short-url/internal/storage/filestore"
 	"sync"
 )
 
 type InMemory struct {
-	lock sync.Mutex
-	m    map[string]map[string]string
+	lock   sync.Mutex
+	memory filestore.FileStore
 }
 
 func NewInMemory() *InMemory {
-	return &InMemory{
-		m: make(map[string]map[string]string),
-	}
-	//	m: make(map[int]string),
-	//}
+	return &InMemory{}
 }
 
-//MapUserURL := make(map[int]string)
-
-//var UsersURL = []UserURL{
-//	{ID: 1000, OriginalURL: "https://yandex.ru", Identifier: "t1"},
-//	{ID: 1001, OriginalURL: "https://yandex.ru/123", Identifier: "t2"},
-//}
-
-func (s *InMemory) GetAll() (map[string]map[string]string, error) {
+func (s *InMemory) GetAll() ([]filestore.Event, error) {
 	s.lock.Lock()
 	defer s.lock.Unlock()
-	if s.m != nil {
-		return s.m, nil
+	//bd, _ := file_bd.NewConsumer("bd")
+	//fmt.Println(bd)
+	cfg := config.GetConfig()
+	users := s.memory.GetAllByPath(cfg.FileStoragePath)
+	if users != nil {
+		return users, nil
 	}
-	return s.m, ErrNotFound
+	return users, ErrNotFound
 }
 func (s *InMemory) GetOriginalURL(Identifier string) (string, error) {
 	s.lock.Lock()
 	defer s.lock.Unlock()
-
-	for _, userUrls := range s.m {
-		for shortUserURL, originalURL := range userUrls {
-			if Identifier == shortUserURL {
-				return originalURL, nil
-			}
-		}
+	cfg := config.GetConfig()
+	originalURL, err := s.memory.GetOriginalURL(Identifier, cfg.FileStoragePath)
+	if err != nil {
+		return "", err
 	}
-	//if user.Identifier == Identifier {
-	//	return user.OriginalURL, nil
-	//}
-
-	return "", ErrNotFound
+	return originalURL, nil
 }
 
-func (s *InMemory) GetShortURL(newUserURL string) string {
+func (s *InMemory) GetShortURL(newUserURL string) (string, error) {
 	s.lock.Lock()
 	defer s.lock.Unlock()
-	fmt.Println(newUserURL)
-	id := s.GetNewID()
 
-	shortURL := ShortenURL(id)
-	fmt.Println(id, shortURL)
-	s.m[strconv.Itoa(id)] = map[string]string{
-		shortURL: newUserURL,
-	}
-	fmt.Println(s.m)
-	//var newUser = UserURL{ID: id, OriginalURL: newUserURL, Identifier: shortURL}
-	//UsersURL = append(UsersURL, newUser)
-	return shortURL
-}
+	cfg := config.GetConfig()
 
-func (s *InMemory) GetNewID() int {
-	var max = 10001
-	for stID := range s.m {
-		id, _ := strconv.Atoi(stID)
-		if id > max {
-			max = id
-		}
+	newID := s.memory.GetNewID(cfg.FileStoragePath)
+
+	shortURL := ShortenURL(newID)
+	fmt.Println()
+	err := s.memory.AddNewLink(newID, shortURL, newUserURL, cfg.FileStoragePath)
+	if err != nil {
+		panic(err)
 	}
-	max++
-	return max
+
+	return cfg.BaseURL + "/" + shortURL, nil
 }

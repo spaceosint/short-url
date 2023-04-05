@@ -1,32 +1,23 @@
 package storage
 
 import (
-	"fmt"
-	"strconv"
 	"sync"
 )
 
 type InMemory struct {
 	lock sync.Mutex
-	m    map[string]map[string]string
+	m    map[string]string
 }
 
 func NewInMemory() *InMemory {
 	return &InMemory{
-		m: make(map[string]map[string]string),
+		m: make(map[string]string),
 	}
-	//	m: make(map[int]string),
-	//}
 }
 
-//MapUserURL := make(map[int]string)
+var ID int = 10000
 
-//var UsersURL = []UserURL{
-//	{ID: 1000, OriginalURL: "https://yandex.ru", Identifier: "t1"},
-//	{ID: 1001, OriginalURL: "https://yandex.ru/123", Identifier: "t2"},
-//}
-
-func (s *InMemory) GetAll() (map[string]map[string]string, error) {
+func (s *InMemory) GetAll() (map[string]string, error) {
 	s.lock.Lock()
 	defer s.lock.Unlock()
 	if s.m != nil {
@@ -38,45 +29,23 @@ func (s *InMemory) GetOriginalURL(Identifier string) (string, error) {
 	s.lock.Lock()
 	defer s.lock.Unlock()
 
-	for _, userUrls := range s.m {
-		for shortUserURL, originalURL := range userUrls {
-			if Identifier == shortUserURL {
-				return originalURL, nil
-			}
-		}
+	if v, ok := s.m[Identifier]; ok {
+		return v, nil
 	}
-	//if user.Identifier == Identifier {
-	//	return user.OriginalURL, nil
-	//}
-
 	return "", ErrNotFound
 }
 
-func (s *InMemory) GetShortURL(newUserURL string) string {
+func (s *InMemory) GetShortURL(newUserURL string) (string, error) {
 	s.lock.Lock()
 	defer s.lock.Unlock()
-	fmt.Println(newUserURL)
-	id := s.GetNewID()
 
-	shortURL := ShortenURL(id)
-	fmt.Println(id, shortURL)
-	s.m[strconv.Itoa(id)] = map[string]string{
-		shortURL: newUserURL,
-	}
-	fmt.Println(s.m)
-	//var newUser = UserURL{ID: id, OriginalURL: newUserURL, Identifier: shortURL}
-	//UsersURL = append(UsersURL, newUser)
-	return shortURL
-}
+	ID++
+	shortURL := ShortenURL(ID)
 
-func (s *InMemory) GetNewID() int {
-	var max = 10001
-	for stID := range s.m {
-		id, _ := strconv.Atoi(stID)
-		if id > max {
-			max = id
-		}
+	if _, ok := s.m[shortURL]; ok {
+		return "", ErrAlreadyExists
 	}
-	max++
-	return max
+	s.m[shortURL] = newUserURL
+
+	return "http://127.0.0.1:8080/" + shortURL, nil
 }

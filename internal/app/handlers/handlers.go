@@ -1,8 +1,11 @@
 package handlers
 
 import (
+	"bytes"
+	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/goccy/go-json"
 	"github.com/spaceosint/short-url/internal/storage"
 	"log"
 	"net/http"
@@ -41,29 +44,78 @@ func (h *Handler) GetUsersURL(c *gin.Context) {
 
 	c.IndentedJSON(http.StatusOK, users)
 }
-func (h *Handler) PostNewUserURL(c *gin.Context) {
+func (h *Handler) PostNewUserURLJSON(c *gin.Context) {
+	var newUserURL storage.UserURL
+	//
+	//if err := c.BindJSON(&newUserURL); err != nil {
+	//	c.IndentedJSON(http.StatusBadRequest, MyError{"bed_request"})
+	//	return
+	//}
 
-	newUserURL, err := c.GetRawData()
-	if err != nil {
-		log.Print(err)
+	//b, err := io.ReadAll(c.Request.Body)
+	//// обрабатываем ошибку
+	//if err != nil {
+	//	c.IndentedJSON(http.StatusBadRequest, MyError{"bed_request"})
+	//	return
+	//}
+
+	//ewUserURL, err := c.GetRawData()
+	//if err != nil {
+	//	c.IndentedJSON(http.StatusBadRequest, MyError{"bed_request"})
+	//	return
+	//}
+	//if err := json.Unmarshal(b, &newUserURL); err != nil {
+	//	panic(err)
+	//}
+
+	if err := json.NewDecoder(c.Request.Body).Decode(&newUserURL); err != nil {
 		c.IndentedJSON(http.StatusBadRequest, MyError{"bed_request"})
 		return
 	}
 
-	fmt.Println(string(newUserURL), newUserURL)
+	shortURL, err := h.storage.GetShortURL(newUserURL.OriginalURL)
+	if err != nil {
+		log.Fatal(err)
+	}
+	newUserURL.Identifier = shortURL
+
+	buf := bytes.NewBuffer([]byte{})
+	encoder := json.NewEncoder(buf)
+	encoder.SetEscapeHTML(false) // без этой опции символ '&' будет заменён на "\u0026"
+	encoder.Encode(newUserURL.Identifier)
+	fmt.Println(buf.String())
+
+	c.IndentedJSON(http.StatusCreated, gin.H{"result": newUserURL.Identifier})
+}
+func (h *Handler) PostNewUserURL(c *gin.Context) {
+
+	newUserURL, err := c.GetRawData()
+	if err != nil {
+		c.IndentedJSON(http.StatusBadRequest, MyError{"bed_request"})
+		return
+	}
+
 	//shortURL := h.storage.GetShortURL(string(newUserURL))
-	shortURL := h.storage.GetShortURL(string(newUserURL))
-	fmt.Println(shortURL)
-	c.String(http.StatusCreated, "http://127.0.0.1:8080/"+shortURL)
+	shortURL, err := h.storage.GetShortURL(string(newUserURL))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	c.String(http.StatusCreated, shortURL)
 }
 func (h *Handler) GetUserURLByIdentifier(c *gin.Context) {
 	id := c.Param("Identifier")
 	//OriginalURL, err := h.storage.GetOriginalURL(id) storage.NewInMemory().
 	OriginalURL, err := h.storage.GetOriginalURL(id)
-	if err != nil {
+	if errors.Is(err, storage.ErrNotFound) {
 		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "URL not found"})
 		return
 	}
+	if errors.Is(err, storage.ErrAlreadyExists) {
+		c.IndentedJSON(http.StatusAlreadyReported, gin.H{"message": "AlreadyExists"})
+		return
+	}
+
 	c.Redirect(http.StatusTemporaryRedirect, OriginalURL)
 
 }

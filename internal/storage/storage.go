@@ -2,21 +2,20 @@ package storage
 
 import "errors"
 
-type UserURL struct {
-	ID          uint32
-	Identifier  string
-	OriginalURL string
-	//CreatedAt time.Time
-	//UpdatedAt time.Time
-}
-
 var (
-	ErrNotFound = errors.New("not found")
-	//ErrAlreadyExists = errors.New("already exists")
+	ErrNotFound      = errors.New("not found")
+	ErrAlreadyExists = errors.New("already exists")
 )
 
 type Storage interface {
-	GetAll() (map[string]map[string]string, error)
+	GetAll() (map[string]string, error)
 	GetOriginalURL(Identifier string) (string, error)
-	GetShortURL(newUserURL string) string
+	GetShortURL(newUserURL string) (string, error)
+}
+
+type UserURL struct {
+	Identifier  string `json:"result"`
+	OriginalURL string `json:"url"`
+	//CreatedAt time.Time
+	//UpdatedAt time.Time
 }

@@ -138,7 +138,11 @@ func (f *FileStore) GetShortURL(newUserURL string) (string, error) {
 func (f *FileStore) GetOriginalURL(identifier string) (string, error) {
 
 	cons, err := NewConsumer(f.cfg.FileStoragePath)
-	defer cons.file.Close()
+	defer func() {
+		if cerr := cons.file.Close(); cerr != nil {
+			log.Println(cerr)
+		}
+	}()
 	if err != nil {
 		return "", err
 	}

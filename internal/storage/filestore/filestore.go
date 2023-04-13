@@ -137,7 +137,12 @@ func (f *FileStore) GetShortURL(newUserURL string) (string, error) {
 func (f *FileStore) GetOriginalURL(identifier string) (string, error) {
 
 	cons, err := NewConsumer(f.cfg.FileStoragePath)
-	defer cons.file.Close()
+	defer func(file *os.File) {
+		err := file.Close()
+		if err != nil {
+
+		}
+	}(cons.file)
 	if err != nil {
 		return "", err
 	}
@@ -176,7 +181,12 @@ func (f *FileStore) GetNewIDFile(filePath string) uint {
 func (f *FileStore) GetAllByPathFile(filePath string) []Event {
 	var users []Event
 	cons, err := NewConsumer(filePath)
-	defer cons.file.Close()
+	defer func(file *os.File) {
+		err := file.Close()
+		if err != nil {
+
+		}
+	}(cons.file)
 	if err != nil {
 		return nil
 	}

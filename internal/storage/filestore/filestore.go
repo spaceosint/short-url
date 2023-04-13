@@ -7,6 +7,7 @@ import (
 	"github.com/spaceosint/short-url/internal/config"
 	"github.com/spaceosint/short-url/pkg/shorten"
 	"io"
+	"log"
 	"os"
 	"strconv"
 )
@@ -137,12 +138,7 @@ func (f *FileStore) GetShortURL(newUserURL string) (string, error) {
 func (f *FileStore) GetOriginalURL(identifier string) (string, error) {
 
 	cons, err := NewConsumer(f.cfg.FileStoragePath)
-	defer func(file *os.File) {
-		err := file.Close()
-		if err != nil {
-
-		}
-	}(cons.file)
+	defer cons.file.Close()
 	if err != nil {
 		return "", err
 	}
@@ -181,12 +177,11 @@ func (f *FileStore) GetNewIDFile(filePath string) uint {
 func (f *FileStore) GetAllByPathFile(filePath string) []Event {
 	var users []Event
 	cons, err := NewConsumer(filePath)
-	defer func(file *os.File) {
-		err := file.Close()
-		if err != nil {
-
+	defer func() {
+		if cerr := cons.file.Close(); cerr != nil {
+			log.Println(cerr)
 		}
-	}(cons.file)
+	}()
 	if err != nil {
 		return nil
 	}
@@ -208,7 +203,11 @@ func (f *FileStore) GetAll() (map[string]string, error) {
 	if err != nil {
 		return events, err
 	}
-	defer cons.file.Close()
+	defer func() {
+		if cerr := cons.file.Close(); cerr != nil {
+			log.Println(cerr)
+		}
+	}()
 
 	for {
 		event, err := cons.ReadEvent()

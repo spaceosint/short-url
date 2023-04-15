@@ -13,7 +13,7 @@ import (
 )
 
 func TestPostNewUserURLJSON(t *testing.T) {
-	cfg := config.Config{BaseURL: "http://127.0.0.1:8080", FileStoragePath: "", ServerAddress: "127.0.0.1:8080"}
+	cfg := config.ConfigViper{BaseURL: "http://127.0.0.1:8080", FileStoragePath: "", ServerAddress: "127.0.0.1:8080"}
 
 	storage := inmemory.NewInMemory(cfg)
 

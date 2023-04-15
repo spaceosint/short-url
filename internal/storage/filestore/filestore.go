@@ -18,10 +18,10 @@ type Event struct {
 	ShortURL    string `json:"short_url"`
 }
 type FileStore struct {
-	cfg config.Config
+	cfg config.ConfigViper
 }
 
-func NewInFileStore(config config.Config) *FileStore {
+func NewInFileStore(config config.ConfigViper) *FileStore {
 	return &FileStore{
 		cfg: config,
 	}
@@ -126,7 +126,11 @@ func (f *FileStore) GetShortURL(newUserURL string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	defer prod.file.Close()
+	defer func() {
+		if cerr := prod.file.Close(); cerr != nil {
+			log.Println(cerr)
+		}
+	}()
 	err = prod.WriteEvent(&evn)
 	if err != nil {
 		fmt.Println(err)
@@ -162,6 +166,11 @@ func (f *FileStore) GetNewIDFile(filePath string) uint {
 	var maxID uint = 10000
 
 	cons, err := NewConsumer(filePath)
+	defer func() {
+		if cerr := cons.file.Close(); cerr != nil {
+			log.Println(cerr)
+		}
+	}()
 	if err != nil {
 		return maxID
 	}

@@ -22,11 +22,11 @@ type handler interface {
 
 type Handler struct {
 	storage     storage.Storage
-	cfg         config.Config
+	cfg         config.ConfigViper
 	fileStorage filestore.FileStore
 }
 
-func New(storage storage.Storage, config config.Config) *Handler {
+func New(storage storage.Storage, config config.ConfigViper) *Handler {
 	return &Handler{
 		cfg:     config,
 		storage: storage,
@@ -47,13 +47,13 @@ func (h *Handler) PostNewUserURLJSON(c *gin.Context) {
 	var newUserURL storage.UserURL
 
 	if err := json.NewDecoder(c.Request.Body).Decode(&newUserURL); err != nil {
-		c.IndentedJSON(http.StatusBadRequest, MyError{"bed_request_json"})
+		c.IndentedJSON(http.StatusBadRequest, MyError{err.Error()})
 		return
 	}
 
 	shortURL, err := h.storage.GetShortURL(newUserURL.OriginalURL)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	newUserURL.Identifier = shortURL
 
@@ -69,7 +69,7 @@ func (h *Handler) PostNewUserURL(c *gin.Context) {
 	}
 	shortURL, err := h.storage.GetShortURL(string(newUserURL))
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	c.String(http.StatusCreated, shortURL)
 }
@@ -84,6 +84,9 @@ func (h *Handler) GetUserURLByIdentifier(c *gin.Context) {
 	}
 	if errors.Is(err, storage.ErrAlreadyExists) {
 		c.IndentedJSON(http.StatusAlreadyReported, gin.H{"message": "AlreadyExists"})
+		return
+	} else {
+		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "bed_request"})
 		return
 	}
 

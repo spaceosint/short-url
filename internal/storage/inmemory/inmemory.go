@@ -11,12 +11,12 @@ import (
 
 type InMemory struct {
 	lock sync.Mutex
-	cfg  config.Config
+	cfg  config.ConfigViper
 	m    map[string]string
 	//	memory filestore.FileStore
 }
 
-func NewInMemory(config config.Config) *InMemory {
+func NewInMemory(config config.ConfigViper) *InMemory {
 	return &InMemory{
 		cfg: config,
 		m:   make(map[string]string),
@@ -73,8 +73,8 @@ func (s *InMemory) GetShortURL(newUserURL string) (string, error) {
 	shortURL := shorten.ShortenURL(ID)
 
 	s.m[shortURL] = newUserURL
-	s.m["Identifier"] = shortURL
-	s.m["OriginalURL"] = newUserURL
+	//s.m["Identifier"] = shortURL
+	//s.m["OriginalURL"] = newUserURL
 
 	return s.cfg.BaseURL + "/" + shortURL, nil
 }

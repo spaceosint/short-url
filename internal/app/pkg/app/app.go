@@ -19,7 +19,7 @@ type App struct {
 	m   middleware.Middleware
 }
 
-func New(cfg config.Config) (*App, error) {
+func New(cfg config.ConfigViper) (*App, error) {
 	a := &App{}
 
 	if cfg.FileStoragePath != "" {
@@ -44,7 +44,7 @@ func New(cfg config.Config) (*App, error) {
 	return a, nil
 }
 
-func (a *App) Run(cfg config.Config) error {
+func (a *App) Run(cfg config.ConfigViper) error {
 
 	err := a.r.Run(cfg.ServerAddress)
 	if err != nil {

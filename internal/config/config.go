@@ -11,17 +11,11 @@ type Config struct {
 	FileStoragePath string `env:"FILE_STORAGE_PATH" envDefault:""`
 }
 
-//var instance *Config
-//var once sync.Once
-
 func GetConfig() Config {
-	//once.Do(func() {
 	var cfg Config
 	err := env.Parse(&cfg)
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	//})
 	return cfg
 }

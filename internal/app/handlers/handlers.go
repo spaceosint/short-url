@@ -85,7 +85,8 @@ func (h *Handler) GetUserURLByIdentifier(c *gin.Context) {
 	if errors.Is(err, storage.ErrAlreadyExists) {
 		c.IndentedJSON(http.StatusAlreadyReported, gin.H{"message": "AlreadyExists"})
 		return
-	} else {
+	}
+	if err != nil {
 		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "bed_request"})
 		return
 	}

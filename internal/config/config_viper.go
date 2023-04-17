@@ -21,12 +21,12 @@ func GetConfigViper() ConfigViper {
 	pflag.Parse()
 
 	// Инициализация Viper
-	viper.AutomaticEnv()        // автоматическое чтение переменных окружения
-	viper.SetConfigType("yaml") // тип конфигурации
+	viper.AutomaticEnv() // автоматическое чтение переменных окружения
+	//viper.SetConfigType("yaml") // тип конфигурации
 
 	// Чтение значений из env
-	viper.SetDefault("SERVER_ADDRESS", "localhost:8080")
-	viper.SetDefault("BASE_URL", "http://localhost:8080")
+	viper.SetDefault("SERVER_ADDRESS", "127.0.0.1:8080")
+	viper.SetDefault("BASE_URL", "http://127.0.0.1:8080")
 	viper.SetDefault("FILE_STORAGE_PATH", "")
 
 	// Применение значений из флагов, если они были установлены

@@ -1,9 +1,12 @@
 package handlers
 
 import (
-	"fmt"
+	"errors"
 	"github.com/gin-gonic/gin"
+	"github.com/segmentio/encoding/json"
+	"github.com/spaceosint/short-url/internal/config"
 	"github.com/spaceosint/short-url/internal/storage"
+	"github.com/spaceosint/short-url/internal/storage/filestore"
 	"log"
 	"net/http"
 )
@@ -17,22 +20,21 @@ type handler interface {
 	GetUserURLByIdentifier(c *gin.Context)
 }
 
-//type Shorten interface {
-//	ShortenURL(id uint32) string
-//}
-
 type Handler struct {
-	storage storage.Storage
+	storage     storage.Storage
+	cfg         config.ConfigViper
+	fileStorage filestore.FileStore
 }
 
-func New(storage storage.Storage) *Handler {
+func New(storage storage.Storage, config config.ConfigViper) *Handler {
 	return &Handler{
+		cfg:     config,
 		storage: storage,
 	}
 }
 
 func (h *Handler) GetUsersURL(c *gin.Context) {
-	//users, err := h.storage.GetAll()
+
 	users, err := h.storage.GetAll()
 	if err != nil {
 		c.Status(http.StatusNotFound)
@@ -41,29 +43,57 @@ func (h *Handler) GetUsersURL(c *gin.Context) {
 
 	c.IndentedJSON(http.StatusOK, users)
 }
+func (h *Handler) PostNewUserURLJSON(c *gin.Context) {
+	var newUserURL storage.UserURL
+
+	if err := json.NewDecoder(c.Request.Body).Decode(&newUserURL); err != nil {
+		c.IndentedJSON(http.StatusBadRequest, MyError{err.Error()})
+		return
+	}
+
+	shortURL, err := h.storage.GetShortURL(newUserURL.OriginalURL)
+	if err != nil {
+		log.Println(err)
+		c.IndentedJSON(http.StatusBadRequest, MyError{err.Error()})
+		return
+	}
+	newUserURL.Identifier = shortURL
+
+	c.IndentedJSON(http.StatusCreated, gin.H{"result": newUserURL.Identifier})
+}
 func (h *Handler) PostNewUserURL(c *gin.Context) {
 
 	newUserURL, err := c.GetRawData()
+
 	if err != nil {
-		log.Print(err)
 		c.IndentedJSON(http.StatusBadRequest, MyError{"bed_request"})
 		return
 	}
-
-	fmt.Println(string(newUserURL), newUserURL)
-	//shortURL := h.storage.GetShortURL(string(newUserURL))
-	shortURL := h.storage.GetShortURL(string(newUserURL))
-	fmt.Println(shortURL)
-	c.String(http.StatusCreated, "http://127.0.0.1:8080/"+shortURL)
+	shortURL, err := h.storage.GetShortURL(string(newUserURL))
+	if err != nil {
+		log.Println(err)
+		c.IndentedJSON(http.StatusInternalServerError, MyError{err.Error()})
+	}
+	c.String(http.StatusCreated, shortURL)
 }
+
 func (h *Handler) GetUserURLByIdentifier(c *gin.Context) {
 	id := c.Param("Identifier")
-	//OriginalURL, err := h.storage.GetOriginalURL(id) storage.NewInMemory().
+
 	OriginalURL, err := h.storage.GetOriginalURL(id)
-	if err != nil {
+	if errors.Is(err, storage.ErrNotFound) {
 		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "URL not found"})
 		return
 	}
+	if errors.Is(err, storage.ErrAlreadyExists) {
+		c.IndentedJSON(http.StatusAlreadyReported, gin.H{"message": "AlreadyExists"})
+		return
+	}
+	if err != nil {
+		c.IndentedJSON(http.StatusInternalServerError, MyError{err.Error()})
+		return
+	}
+
 	c.Redirect(http.StatusTemporaryRedirect, OriginalURL)
 
 }

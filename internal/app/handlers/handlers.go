@@ -54,6 +54,8 @@ func (h *Handler) PostNewUserURLJSON(c *gin.Context) {
 	shortURL, err := h.storage.GetShortURL(newUserURL.OriginalURL)
 	if err != nil {
 		log.Println(err)
+		c.IndentedJSON(http.StatusBadRequest, MyError{err.Error()})
+		return
 	}
 	newUserURL.Identifier = shortURL
 
@@ -70,6 +72,7 @@ func (h *Handler) PostNewUserURL(c *gin.Context) {
 	shortURL, err := h.storage.GetShortURL(string(newUserURL))
 	if err != nil {
 		log.Println(err)
+		c.IndentedJSON(http.StatusInternalServerError, MyError{err.Error()})
 	}
 	c.String(http.StatusCreated, shortURL)
 }
@@ -87,7 +90,7 @@ func (h *Handler) GetUserURLByIdentifier(c *gin.Context) {
 		return
 	}
 	if err != nil {
-		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "bed_request"})
+		c.IndentedJSON(http.StatusInternalServerError, MyError{err.Error()})
 		return
 	}
 

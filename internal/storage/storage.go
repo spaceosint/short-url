@@ -18,6 +18,4 @@ type Storage interface {
 type UserURL struct {
 	Identifier  string `json:"result"`
 	OriginalURL string `json:"url"`
-	//CreatedAt time.Time
-	//UpdatedAt time.Time
 }

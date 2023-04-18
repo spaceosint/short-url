@@ -6,7 +6,7 @@ https://google.com
 
 ###
 
-GET http://localhost:8080/fwfwrfwfwhfwedscwewfgtgbrgf3r34fwc43c34fcwcxe2d2f43g544g5g34f24f23f4f
+GET http://localhost:8080/get-users
 Content-Type: application/text
 Accept-Encoding: gzip
 ###

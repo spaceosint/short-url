@@ -60,8 +60,6 @@ func GzipReaderHandle() gin.HandlerFunc {
 			// если gzip не поддерживается, передаём управление
 			// дальше без изменений
 			c.Next()
-
-			//next.ServeHTTP(c.Writer, c.Request)
 			return
 		}
 
@@ -73,6 +71,5 @@ func GzipReaderHandle() gin.HandlerFunc {
 		c.Request.Body = gz
 
 		c.Next()
-		//next.ServeHTTP(gzipWriter{ResponseWriter: c.Writer, Writer: gz}, c.Request)
 	}
 }

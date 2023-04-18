@@ -1,8 +1,6 @@
 package inmemory
 
 import (
-	"fmt"
-	"github.com/segmentio/encoding/json"
 	"github.com/spaceosint/short-url/internal/config"
 	"github.com/spaceosint/short-url/internal/storage"
 	"github.com/spaceosint/short-url/pkg/shorten"
@@ -13,7 +11,6 @@ type InMemory struct {
 	lock sync.Mutex
 	cfg  config.ConfigViper
 	m    map[string]string
-	//	memory filestore.FileStore
 }
 
 func NewInMemory(config config.ConfigViper) *InMemory {
@@ -32,26 +29,7 @@ func (s *InMemory) GetAll() (map[string]string, error) {
 	if s.m != nil {
 		return s.m, nil
 	}
-
-	// Маршалим данные в JSON
-	jsonData, err := json.Marshal(s.m)
-	if err != nil {
-		fmt.Println(err)
-
-	}
-
-	// Анмаршалим JSON данные в структуру
-	var person storage.UserURL
-	err = json.Unmarshal(jsonData, &person)
-	if err != nil {
-		fmt.Println(err)
-
-	}
-
-	// Выводим данные структуры
-	fmt.Println(person)
-	fmt.Printf("%+v\n", person)
-	return s.m, storage.ErrNotFound
+	return map[string]string{}, nil
 }
 
 func (s *InMemory) GetOriginalURL(Identifier string) (string, error) {
@@ -73,8 +51,6 @@ func (s *InMemory) GetShortURL(newUserURL string) (string, error) {
 	shortURL := shorten.ShortenURL(ID)
 
 	s.m[shortURL] = newUserURL
-	//s.m["Identifier"] = shortURL
-	//s.m["OriginalURL"] = newUserURL
 
 	return s.cfg.BaseURL + "/" + shortURL, nil
 }

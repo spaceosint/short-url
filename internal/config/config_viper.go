@@ -22,7 +22,8 @@ func GetConfigViper() ConfigViper {
 
 	// Инициализация Viper
 	viper.AutomaticEnv() // автоматическое чтение переменных окружения
-	//viper.SetConfigType("yaml") // тип конфигурации
+
+	//TODO viper.SetConfigType("yaml") тип конфигурации
 
 	// Чтение значений из env
 	viper.SetDefault("SERVER_ADDRESS", "127.0.0.1:8080")
